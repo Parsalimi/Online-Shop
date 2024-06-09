@@ -1,27 +1,15 @@
-########################################################################### ITEM FORMAT ############################################################################
-### id | name | count | price | rating | Seller Shop | category | Detail | Features [Sub Feutures []] | Created Date | Created by | IsDiscounted | Discount Date ###
-####################################################################################################################################################################
-from main import OnlineShop
+# id | name | price | count | category_id | detail | isItemDeleted
 from tools import *
 from datetime import datetime
 
 class Item():
-    items_list = []
-
-    def __init__(self, id, name, count, price, rating, sellerShop, category, detail, features, createdDate, createdBy, isDiscounted, discountDate):
-        self.id = id
+    def __init__(self, item_id, name, price, count, category_id, detail):
+        self.item_id = item_id
         self.name = name
-        self.count = count
         self.price = price
-        self.rating = rating
-        self.sellerShop = sellerShop
-        self.category = category
+        self.count = count
+        self.category_id = category_id
         self.detail = detail
-        self.features = features
-        self.createdDate = createdDate
-        self.createdBy = createdBy
-        self.isDiscounted = isDiscounted
-        self.discountDate = discountDate
 
     def getId():
         with open("DB\\item_db\\lastItemId.txt","r") as file:

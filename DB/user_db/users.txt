@@ -1,1 +1,0 @@
-{'id': 1, 'username': 'parsalimi', 'password': '1234', 'fname': 'Parsa', 'lname': 'Salimi', 'phone': '09363332044', 'isPhoneVerifyed': '', 'nationalId': '', 'dateOfBirth': '', 'role': '0', 'lastLoginDate': datetime.datetime(2024, 6, 8, 20, 41, 59, 823152), 'address': 'Niavaran', 'cart': ''}
