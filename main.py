@@ -2,7 +2,7 @@ from tools import *
 from item import Item
 from user import Users
 
-class cls:
+class OnlineShop:
     items_list = []
     users_list = []
     selectedUser = ""
@@ -11,12 +11,13 @@ class cls:
 
     @classmethod
     def ShowMainMenu(cls):
-        cls.users_list = Users.UsersUpdate()
         with open("DB\\user_db\\the_latest_login_id.txt","r") as file:
             lastLoginId = file.read()
             if lastLoginId != "":
-                cls.selectedUser = Users.SearchUser(cls.users_list, id = lastLoginId)
-                Users.write_the_latest_user_id(cls.selectedUser.user_id)
+                cls.selectedUser = Users.SearchUser(id = int(lastLoginId))
+                #Users.write_the_latest_user_id(cls.selectedUser.user_id)
+                if cls.selectedUser.role == 1:
+                    cls.isAdmin = True
                 cls.logged_in = True
 
         if cls.logged_in == False:
@@ -24,9 +25,9 @@ class cls:
             print(ColoredNotification("Sign In | Sign UP", "green"))
         else:
             # When Admins Enter
-            if cls.selectedUser.role == "1":
+            if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification("Admin Panel: Add Item | Show Items","red"))
+                print(ColoredNotification("Admin Panel: Item | Category | User | Log Order","red"))
                 print(ColoredNotification("Cart(0) | Sign Out | Categories | Search", "green"))
 
             # When Normal Users Enter
@@ -44,10 +45,8 @@ class cls:
             if cls.logged_in: # Logged-in
                 
                 if cls.isAdmin: # Admin Enters
-                    if answer == "add item":
-                        Item.AddItemMenu()
-                    elif answer == "show item":
-                        Item.ShowItems()
+                    if answer == "item":
+                        Item.ItemMenu()
                     elif answer == "!help":
                         pass
                     else:
@@ -59,8 +58,8 @@ class cls:
                         pass
                     
                     elif answer == "sign out":
-                        if cls.selectedUser.id == "":
-                            print(Fore.RED+"You are not signed in!!!"+Fore.WHITE)
+                        if cls.logged_in == False:
+                            print(ColoredNotification("You are not signed in!!!","red"))
                             Wait()
                         else:
                             Users.write_the_latest_user_id("")
@@ -73,7 +72,8 @@ class cls:
                 if answer == "sign up":
                     Users.SignUpMenu()
                 elif answer == "sign in":
-                    Users.SignInMenu()
+                    if Users.SignInMenu() == True:
+                        cls.logged_in = True
 
                 
 
@@ -83,4 +83,4 @@ class cls:
 ## Program Starts HERE! ##
 ##########################
 if __name__ == "__main__":
-    cls.MainMenu()
+    OnlineShop.MainMenu()

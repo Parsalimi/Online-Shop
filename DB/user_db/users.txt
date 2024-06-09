@@ -1,0 +1,2 @@
+{'user_id': 1, 'username': 'parsa', 'password': '1234', 'fname': 'Parsa', 'lname': 'Salimi', 'phone': '09363332044', 'role': 1, 'balance': 0, 'cart_id': 0}
+{'user_id': 2, 'username': 'ali', 'password': '1234', 'fname': 'Ali', 'lname': 'Rajaei', 'phone': '09123456789', 'role': 0, 'balance': 0, 'cart_id': 0}
