@@ -33,15 +33,53 @@ def TextStructure(text, desired_width):
         spaces_width = int(remaining_space // 2)
         return (spaces_width * ' ' + text + (spaces_width + 1) * ' ')
     
-# def getEntry(question):
-#     flag = True
-#     while flag:
-#         ClearTerminal()
-#         answer = input(question)
-#         if ',' in answer or '\\' in answer:
-#             print(Fore.RED + "You can't use '\\' or ','" + Fore.WHITE)
-#             Wait()
-#         else:
-#             break
-        
-#     return answer
+def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=None):
+    """
+    type 1:
+        Gets int
+
+    type 2:
+        Gets float
+
+    type 3:
+        Gets str
+    """
+    if type == 1: # get int
+        while True:
+            while True:
+                value = int(input(prompt).strip().lower())
+                if value == return_none_on:
+                    return None
+                elif valid_options:
+                    if value in valid_options:
+                        return value
+                    else:
+                        print(f"Please enter one of the following: {', '.join(valid_options)}")
+                else:
+                    return value
+    
+    elif type == 2: # get float
+        while True:
+            value = float(input(prompt).strip().lower())
+            if value == return_none_on:
+                return None
+            elif valid_options:
+                if value in valid_options:
+                    return value
+                else:
+                    print(f"Please enter one of the following: {', '.join(valid_options)}")
+            else:
+                return value
+
+    if type == 3: # get str input
+        while True:
+            value = input(prompt).strip().lower()
+            if value == return_none_on:
+                return None
+            elif valid_options:
+                if value in valid_options:
+                    return value
+                else:
+                    print(f"Please enter one of the following: {', '.join(valid_options)}")
+            else:
+                return value

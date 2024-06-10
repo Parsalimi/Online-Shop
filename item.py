@@ -15,10 +15,10 @@ class Item():
 
     def getId():
         with open("DB\\item_db\\id_last_item_created.txt","r") as file:
-            lastBookId = file.read()
-            if lastBookId != "":
-                lastBookId = int(lastBookId) + 1
-                return lastBookId
+            last_item_id = file.read()
+            if last_item_id != "":
+                last_item_id = int(last_item_id) + 1
+                return last_item_id
             else:
                 return 1
 
@@ -168,62 +168,6 @@ class Item():
 
         cls.create_table_item(table_row_list)
 
-
-    def get_float_input(prompt):
-        while True:
-            try:
-                value = float(input(prompt).strip().lower())
-                return value
-            except ValueError:
-                print("Please enter a valid integer.")
-
-    #TODO: bayad ye get_int_input adi ham dorost konam
-    def get_int_input(prompt):
-        while True:
-            try:
-                value = input(prompt).strip().lower()
-                if value == "n":
-                    return None
-                value = int(value)
-                return value
-            except ValueError:
-                print("Please enter a valid integer.")
-
-    def get_str_input_and_none(prompt, valid_options):
-        while True:
-            value = input(prompt).strip().lower()
-            if value == "n":
-                    return None
-            if value in valid_options:
-                return value
-            else:
-                print(f"Please enter one of the following: {', '.join(valid_options)}")
-
-    @classmethod
-    def get_str_input(cls, prompt, valid_options=None):
-        while True:
-            value = input(prompt).strip()
-            if valid_options:
-                if value.lower() in valid_options:
-                    return value
-                else:
-                    print(f"Please enter one of the following: {', '.join(valid_options)}")
-            else:
-                return value
-    @classmethod
-    def get_str_input_and_none(cls, prompt, valid_options=None):
-        while True:
-            value = input(prompt).strip().lower()
-            if value == 'n':
-                return None
-            elif valid_options:
-                if value in valid_options:
-                    return value
-                else:
-                    print(f"Please enter one of the following: {', '.join(valid_options)}")
-            else:
-                return value
-
     @classmethod
     def search_item_menu(cls):
         ClearTerminal()
@@ -231,26 +175,26 @@ class Item():
 
         print(ColoredNotification("Enter 'n' if you don't want to filter that attribute!!!", "red"))
 
-        search_by = cls.get_str_input_and_none("Search By (id/name/category): ", ['id', 'name', 'category'])
+        search_by = get_input(3, "Search By (id/name/category): ", ['id', 'name', 'category'], 'n')
         search_value = None
         if search_by == "id":
-            search_value = cls.get_int_input("Item ID: ")
+            search_value = get_input(1, "Item ID: ",return_none_on='n')
         elif search_by == 'name':
-            search_value = cls.get_str_input("Item Name: ")  # TODO: Must check a list of item names if available
+            search_value = get_input(3, "Item Name: ", return_none_on='n')  # TODO: Must check a list of item names if available
         elif search_by == 'category':
-            search_value = cls.get_str_input("Item Category: ")  # TODO: Must check a list of categories if available
+            search_value = get_input(3, "Item Category: ", return_none_on='n')  # TODO: Must check a list of categories if available
 
-        sort_by = cls.get_str_input_and_none("Sort By (price/count): ", ['price', 'count'])
+        sort_by = get_input(3, "Sort By (price/count): ", ['price', 'count'], return_none_on='n')
         sort_order = None
         if sort_by:
-            sort_order = cls.get_str_input(f"Ascending or Descending on {sort_by.capitalize()}? (a/d): ", ['a', 'd'])
+            sort_order = get_input(3, f"Ascending or Descending on {sort_by.capitalize()}? (a/d): ", ['a', 'd'],return_none_on='n')
         
         if sort_by == "price":
-            min_price = cls.get_int_input("MIN PRICE: ")
-            max_price = cls.get_int_input("Max PRICE: ")
+            min_price = get_input(2, "MIN PRICE: ", return_none_on='n')
+            max_price = get_input(2, "Max PRICE: ", return_none_on= 'n')
         else:
-            min_count = cls.get_int_input("MIN Count: ")
-            max_count = cls.get_int_input("Max Count: ")
+            min_count = get_input(2, "MIN Count: ", return_none_on='n')
+            max_count = get_input(2, "Max Count: ", return_none_on='n')
 
         # Here you can use the consolidated search_items method based on the inputs
         cls.search_items(
