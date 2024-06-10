@@ -71,7 +71,7 @@ class Item():
             with open("DB\\item_db\\item.txt", "a") as file:
                 file.write(f'{selectedItem.__dict__}\n')
 
-            Item.update_last_item_id()
+            Item.update_last_item_id(item_id)
 
             print(ColoredNotification("The item Added Successfuley", "green"))
             # Do admin wants to add more item?
@@ -97,22 +97,25 @@ class Item():
         items_list = cls.get_items_list()
         ClearTerminal()
         cls.show_item()
-        item_id = input("Enter item ID to edit: ")
-        for item in items_list:
-            if item["item_id"] == int(item_id):
-                choice = cls.get_str_input("1. Edit Name\n2. Edit Price\n3. Edit Count\n4. Edit Category\n5. Edit Detail",['1','2','3','4','5']) # TODO: Must check a list of item names if available
-                if choice == '1':
-                    item['name'] = input("Enter new name: ")
-                elif choice == '2':
-                    item['price'] = cls.get_float_input("Enter new price: ")
-                elif choice == '3':
-                    item['count'] = cls.get_int_input("Enter new count: ") #TODO: havasam baiad bashe in n ham ghabol mikone va None mide
-                elif choice == '4':
-                    item['category_id'] = Category.select_category()
-                elif choice == '5':
-                    item['detail'] = input("Enter new detail: ")
+        item_id = get_input(1, "(0 to exit)\nEnter item ID to edit: ",return_none_on='0',valid_options=cls.available_item_id())
+        if item_id:
+            for item in items_list:
+                if item["item_id"] == item_id:
+                    ClearTerminal()
+                    choice = get_input(3,"1. Edit Name\n2. Edit Price\n3. Edit Count\n4. Edit Category\n5. Edit Detail\n> ",valid_options=['1','2','3','4','5'])
+                    if choice == '1':
+                        item['name'] = get_input(3, "Enter new name: ")
+                    elif choice == '2':
+                        item['price'] = get_input(2, "Enter new price: ")
+                    elif choice == '3':
+                        item['count'] = get_input(1, "Enter new count: ")
+                    elif choice == '4':
+                        item['category_id'] = Category.select_category()
+                    elif choice == '5':
+                        item['detail'] = get_input(3,"Enter new detail: ")
 
-                cls.update_item_db(items_list)
+                    cls.update_item_db(items_list)
+                    break
 
                 
     
@@ -126,11 +129,12 @@ class Item():
         table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail"]
         for item in items_list:
             if item['is_item_deleted'] == 0:
-                table.add_row([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                table.add_row([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail']])
         print(table)
         Wait()
 
     def create_table_item(table_row_list: list):
+        ClearTerminal()
         table = PrettyTable()
         table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail"]
         for table_row in table_row_list:
@@ -139,32 +143,71 @@ class Item():
         Wait()
     
     @classmethod
-    def search_items(cls, items_list, search_by=None, search_value=None, min_value=None, max_value=None, sort_by=None, ascending=False):
+    def search_items(cls, items_list, search_by=None, search_value=None, min_count:int=None, max_count:int=None, 
+                     min_price:int=None, max_price:int=None,sort_by=None, ascending=True):
+        
+        only_one_result = False
         table_row_list = []
-        
-        # Filtering based on search_by criteria
-        if search_by == 'id':
-            items_list = [item for item in items_list if item['item_id'] == search_value and item['is_item_deleted'] == 0]
-        elif search_by == 'name':
-            items_list = [item for item in items_list if item['name'] == search_value and item['is_item_deleted'] == 0]
-        elif search_by == 'category':
-            category_id = Category.category_name_to_id_convert(search_value)
-            items_list = [item for item in items_list if item['category_id'] == category_id and item['is_item_deleted'] == 0]
-        
-        # Applying min_value and max_value filtering
-        if min_value is not None:
-            items_list = [item for item in items_list if item[sort_by] >= min_value]
-        if max_value is not None:
-            items_list = [item for item in items_list if item[sort_by] <= max_value]
 
-        # Sorting the items
-        if sort_by is not None:
-            items_list.sort(key=lambda x: x[sort_by], reverse=not ascending)
+        # Filtering items based on search criteria
+        if search_by:
+            if search_by == 'id':
+                for item in items_list:
+                    if item['item_id'] == search_value and item['is_item_deleted'] == 0:
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        only_one_result = True
+                        break
 
-        # Collecting the results
-        for item in items_list:
-            if item['is_item_deleted'] == 0:
-                table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+            elif search_by == 'name':
+                for item in items_list:
+                    item_name = str(item['name'])
+                    item_name = item_name.lower()
+                    if item_name == search_value and item['is_item_deleted'] == 0:
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        only_one_result = True
+                        break
+                    
+            elif search_by == 'category':
+                for item in items_list:
+                    if item['category_id'] == search_value and item['is_item_deleted'] == 0:
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+
+            else:
+                for item in items_list:
+                    if item['is_item_deleted'] == 0:
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+
+        if only_one_result == False:
+            # Filter Price
+            if min_price is not None:
+                for index, item in enumerate(table_row_list):
+                    if item[2] < min_price:
+                        table_row_list.pop(index)
+            
+            if max_price is not None:
+                for index, item in enumerate(table_row_list):
+                    if item[2] > max_price:
+                        table_row_list.pop(index)
+
+            # Filter Count
+            if min_count is not None:
+                for index, item in enumerate(table_row_list):
+                    if item[3] < min_count:
+                        table_row_list.pop(index)
+            
+            if max_count is not None:
+                for index, item in enumerate(table_row_list):
+                    if item[3] > max_count:
+                        table_row_list.pop(index)
+
+
+
+            # Sorting the items
+            if sort_by is not None:
+                if sort_by == 'price':
+                    table_row_list = sort_list(table_row_list,2,ascending)
+                else:
+                    table_row_list = sort_list(table_row_list,3,ascending)
 
         cls.create_table_item(table_row_list)
 
@@ -172,39 +215,45 @@ class Item():
     def search_item_menu(cls):
         ClearTerminal()
         items_list = cls.get_items_list()
-
+        only_one_result = False
         print(ColoredNotification("Enter 'n' if you don't want to filter that attribute!!!", "red"))
 
         search_by = get_input(3, "Search By (id/name/category): ", ['id', 'name', 'category'], 'n')
         search_value = None
         if search_by == "id":
-            search_value = get_input(1, "Item ID: ",return_none_on='n')
+            search_value = get_input(1, "Item ID: ", return_none_on='n')
+            only_one_result = True
         elif search_by == 'name':
-            search_value = get_input(3, "Item Name: ", return_none_on='n')  # TODO: Must check a list of item names if available
+            search_value = get_input(3, "Item Name: ", valid_options=cls.available_item_id(), return_none_on='n')
+            only_one_result = True
         elif search_by == 'category':
-            search_value = get_input(3, "Item Category: ", return_none_on='n')  # TODO: Must check a list of categories if available
+            ClearTerminal()
+            search_value = get_input(1, "Item Category (ID): ", valid_options=Category.available_category_id(), return_none_on='n')
 
-        sort_by = get_input(3, "Sort By (price/count): ", ['price', 'count'], return_none_on='n')
-        sort_order = None
-        if sort_by:
-            sort_order = get_input(3, f"Ascending or Descending on {sort_by.capitalize()}? (a/d): ", ['a', 'd'],return_none_on='n')
-        
-        if sort_by == "price":
+        sort_by, sort_by, min_price, max_price, min_count, max_count = None,None,None,None,None,None
+        if only_one_result == False:
+            sort_by = get_input(3, "Sort By (price/count): ", ['price', 'count'], return_none_on='n')
+            sort_order = None
+            if sort_by:
+                sort_order = get_input(3, f"Ascending or Descending on {sort_by}? (a/d): ", ['a', 'd'], return_none_on='n')
+            else:
+                sort_order = None
+
             min_price = get_input(2, "MIN PRICE: ", return_none_on='n')
-            max_price = get_input(2, "Max PRICE: ", return_none_on= 'n')
-        else:
-            min_count = get_input(2, "MIN Count: ", return_none_on='n')
-            max_count = get_input(2, "Max Count: ", return_none_on='n')
+            max_price = get_input(2, "MAX PRICE: ", return_none_on='n')
+            min_count = get_input(2, "MIN COUNT: ", return_none_on='n')
+            max_count = get_input(2, "MAX COUNT: ", return_none_on='n')
 
-        # Here you can use the consolidated search_items method based on the inputs
+        # Use the consolidated search_items method based on the inputs
         cls.search_items(
             items_list,
             search_by=search_by,
             search_value=search_value,
-            min_value=min_price if sort_by == 'price' else min_count,
-            max_value=max_price if sort_by == 'price' else max_count,
-            sort_by=sort_by,
-            ascending=(sort_order == 'a') if sort_order else False
+            min_count=min_count,
+            max_count=max_count,
+            min_price=min_price,
+            max_price=max_price,
+            sort_by=sort_by
         )
 
     def get_items_list():
@@ -214,9 +263,9 @@ class Item():
                 items_list.append(eval(line))
             return items_list
 
-    def update_last_item_id():
+    def update_last_item_id(item_id):
         with open("DB\\item_db\\id_last_item_created.txt","w") as file:
-            file.write(str(Item.getId()))
+            file.write(str(item_id))
 
     @classmethod
     def update_item_db(cls, items_list):
@@ -224,3 +273,13 @@ class Item():
             for item in items_list:
                 selectedItem = cls(item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'], item['is_item_deleted'])
                 file.write(f'{selectedItem.__dict__}\n')
+
+    @classmethod
+    def available_item_id(cls):
+        available_id_list = []
+        items_list = cls.get_items_list()
+        for item in items_list:
+            if item['is_item_deleted'] == 0:
+                available_id_list.append(int(item['item_id']))
+
+        return available_id_list

@@ -1,0 +1,4 @@
+{'category_id': 1, 'name': 'Keyboards', 'is_category_deleted': 0}
+{'category_id': 2, 'name': 'Mouses', 'is_category_deleted': 0}
+{'category_id': 3, 'name': 'Laptops', 'is_category_deleted': 0}
+{'category_id': 4, 'name': 'Phones', 'is_category_deleted': 0}

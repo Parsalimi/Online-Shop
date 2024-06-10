@@ -33,6 +33,20 @@ def TextStructure(text, desired_width):
         spaces_width = int(remaining_space // 2)
         return (spaces_width * ' ' + text + (spaces_width + 1) * ' ')
     
+def sort_list(entry_list:list,sorting_index:int,ascending=True): 
+    if ascending: # az kochik be bozorg
+        for round in range(0, len(entry_list)-1):
+            for index in range(0, len(entry_list)-1):
+                if entry_list[index][sorting_index] > entry_list[index+1][sorting_index]:
+                    entry_list[index][sorting_index], entry_list[index+1][sorting_index] = entry_list[index+1][sorting_index], entry_list[index][sorting_index]
+    else: # az bozorg be kochik
+        for round in range(0, len(entry_list)-1):
+            for index in range(0, len(entry_list)-1):
+                if entry_list[index][sorting_index] < entry_list[index+1][sorting_index]:
+                    entry_list[index][sorting_index], entry_list[index+1][sorting_index] = entry_list[index+1][sorting_index], entry_list[index][sorting_index]
+
+    return entry_list
+
 def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=None):
     """
     type 1:
@@ -47,27 +61,29 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
     if type == 1: # get int
         while True:
             while True:
-                value = int(input(prompt).strip().lower())
+                value = input(prompt).strip().lower()
                 if value == return_none_on:
                     return None
-                elif valid_options:
+                value = int(value)
+                if valid_options:
                     if value in valid_options:
                         return value
                     else:
-                        print(f"Please enter one of the following: {', '.join(valid_options)}")
+                        print(f"Please enter one of the following: {valid_options}")
                 else:
                     return value
     
     elif type == 2: # get float
         while True:
-            value = float(input(prompt).strip().lower())
+            value = input(prompt).strip().lower()
             if value == return_none_on:
                 return None
-            elif valid_options:
+            value = float(value)
+            if valid_options:
                 if value in valid_options:
                     return value
                 else:
-                    print(f"Please enter one of the following: {', '.join(valid_options)}")
+                    print(f"Please enter one of the following: {valid_options}")
             else:
                 return value
 
@@ -80,6 +96,6 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
                 if value in valid_options:
                     return value
                 else:
-                    print(f"Please enter one of the following: {', '.join(valid_options)}")
+                    print(f"Please enter one of the following: {valid_options}")
             else:
                 return value

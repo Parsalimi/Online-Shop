@@ -1,6 +1,7 @@
 from tools import *
 from item import Item
 from user import Users
+from category import Category
 
 class OnlineShop:
     items_list = []
@@ -47,6 +48,8 @@ class OnlineShop:
                 if cls.isAdmin: # Admin Enters
                     if answer == "item":
                         Item.ItemMenu()
+                    elif answer == "category":
+                        Category.category_menu()
                     elif answer == "!help":
                         pass
                     else:
