@@ -1,7 +1,7 @@
 # user_id | username | password | fname | lname | age | phone | role | order_ids | cart_id #10
 from tools import *
 import getpass
-from datetime import datetime
+from prettytable import PrettyTable
 from cart import Cart
 
 class Users:
@@ -197,26 +197,227 @@ class Users:
         while user_menu_flag:
             ClearTerminal()
             print(ColoredNotification("User Management", "green"))
-            print(ColoredNotification("Add | Remove | Edit | Show | Search | Exit", "green"))
+            print(ColoredNotification("Remove | Edit | Show | Search | Exit", "green"))
             answer = input(ColoredNotification("> ", "cyan")).lower()
-            if answer == "add":
-                cls.add_user()
-            elif answer == "remove":
-                cls.remove_category()
+            if answer == "remove":
+                cls.remove_user()
             elif answer == "edit":
-                cls.edit_category()
+                cls.edit_user()
             elif answer == "show":
-                cls.show_categories()
+                cls.show_users()
             elif answer == "search":
-                cls.search_category_menu()
+                cls.search_user_menu()
             elif answer == "exit":
-                category_menu_flag = False
+                user_menu_flag = False
                 break
             else:
                 print(ColoredNotification("Invalid Option", "red"))
                 Wait()
 
-    def add_user():
-        ClearTerminal()
-        user_id = Users.LastUserID()
+    @classmethod
+    def search_user(cls, users_list, search_by=None, search_value=None):
+        table_row_list = []
 
+        if search_by == 'id':
+            for user in users_list:
+                if user['user_id'] == search_value:
+                    table_row_list.append([user['user_id'], user['username'], user['password'],user['fname'], user['lname'], user['age'], user['phone'], user['role'], user['order_ids'], user['cart_id']])
+                    break
+                
+        elif search_by == 'username':
+            for user in users_list:
+                if user['username'].lower() == search_value:
+                    table_row_list.append([user['user_id'], user['username'], user['password'],user['fname'], user['lname'], user['age'], user['phone'], user['role'], user['order_ids'], user['cart_id']])
+                    break
+                
+        elif search_by == 'fname':
+            for user in users_list:
+                if user['fname'].lower() == search_value:
+                    table_row_list.append([user['user_id'], user['username'], user['password'],user['fname'], user['lname'], user['age'], user['phone'], user['role'], user['order_ids'], user['cart_id']])
+
+                
+        elif search_by == 'lname':
+            for user in users_list:
+                if user['lname'].lower() == search_value:
+                    table_row_list.append([user['user_id'], user['username'], user['password'],user['fname'], user['lname'], user['age'], user['phone'], user['role'], user['order_ids'], user['cart_id']])
+
+
+        cls.create_table_user(table_row_list)
+
+    def create_table_user(table_row_list: list):
+        table = PrettyTable()
+        table.field_names = ["ID", 'Username','Password','First Name','Last Name','Age','Phone','Role','Order_ids','Cart_id']
+        for table_row in table_row_list:
+            table.add_row([table_row[0], table_row[1], table_row[2], table_row[3], table_row[4], table_row[5], table_row[6], table_row[7], table_row[8], table_row[9]])
+        print(table)
+        Wait()
+
+    @classmethod
+    def search_user_menu(cls):
+        ClearTerminal()
+        users_list = cls.get_users_list()
+
+        search_by = get_input(3, "(0 to exit)\nSearch By (id/username/fname/lname): ", ['id', 'username', 'fname', 'lname'], '0')
+        search_value = None
+        if search_by == "id":
+            search_value = get_input(1,"user ID: ")
+        elif search_by == 'username':
+            search_value = get_input(3,"Username: ")
+        elif search_by == 'fname':
+            search_value = get_input(3,"First Name: ")
+        elif search_by == 'lname':
+            search_value = get_input(3,"Last Name: ")
+
+        cls.search_user(users_list, search_by=search_by, search_value=search_value)
+        
+    @classmethod
+    def remove_user(cls):
+        users_list = cls.get_users_list()
+
+        ClearTerminal()
+        cls.show_users()
+        user_id = get_input(1,"(0 to exit)\nEnter user ID to remove: ",return_none_on='0')
+        if user_id:
+            for index, user in enumerate(users_list):
+                if user["user_id"] == int(user_id):
+                    users_list.pop(index)
+
+            cls.update_user_db(users_list)
+
+    @classmethod
+    def update_user_db(cls, users_list):
+        with open('DB\\user_db\\users.txt', 'w') as file:
+            for user in users_list:
+                selectedUser = cls(user['user_id'], user['username'], user['password'],user['fname'], user['lname'], user['age'], user['phone'], user['role'], user['order_ids'], user['cart_id'])
+                
+                file.write(f'{selectedUser.__dict__}\n')
+
+    @classmethod
+    def show_users(cls):
+        users_list = cls.get_users_list()
+        ClearTerminal()
+        print(ColoredNotification("Users Table", "green"))
+
+        table = PrettyTable()
+        table.field_names = ["ID", 'Username','Password','First Name','Last Name','Age','Phone','Role','Order_ids','Cart_id']
+        for user in users_list:
+                table.add_row([user['user_id'], 
+                               user['username'], 
+                               '****', 
+                               user['fname'], 
+                               user['lname'], 
+                               user['age'], 
+                               user['phone'], 
+                               user['role'], 
+                               user['order_ids'], 
+                               user['cart_id']])
+        print(table)
+        Wait()
+
+    @classmethod
+    def edit_user(cls):
+        users_list = cls.get_users_list()
+        ClearTerminal()
+        cls.show_users()
+        user_id = get_input(1,"(0 to exit)\nEnter User ID to edit: ",valid_options=cls.available_users_id(),return_none_on='0')
+        if user_id:
+            for user in users_list:
+                if user["user_id"] == int(user_id):
+                    answer = get_input(3,"type these attributes to change them:\nusername | password | fname | lname | age | phone | role\n> ",valid_options=['username','password', 'fname', 'lname', 'age', 'phone','role'])
+                    
+                    if answer == "username":
+                        notcheck = True
+                        while notcheck:
+                            tagged = False
+                            username = input("Username: ")
+                            # Check if that username exists
+                            for user in users_list:
+                                if user['username'] == username:
+                                    print(ColoredNotification("That username is already EXISTS!!!", "red"))
+                                    Wait()
+                                    ClearTerminal()
+                                    tagged = True
+
+                            if tagged == False:
+                                notcheck = False
+
+                        user['username'] = username
+
+                    elif answer == 'password':
+                        user['password']
+
+                    elif answer == 'fname':
+                        notcheck = True
+                        while notcheck:
+                            fname = input("First Name: ")
+                            if is_str_contains_int(fname):
+                                print(ColoredNotification("Does your first name really have a number in it!?!", "red"))
+                                Wait()
+                                ClearTerminal()
+                            else:
+                                notcheck = False
+                        user['fname'] = fname
+
+                    elif answer == 'lname':
+                        notcheck = True
+                        while notcheck:
+                            lname = input("Last Name: ")
+                            if is_str_contains_int(lname):
+                                print(ColoredNotification("Does your last name really have a number in it!?!", "red"))
+                                Wait()
+                                ClearTerminal()
+                            else:
+                                notcheck = False
+                        user['lname'] = lname
+
+                    elif answer == 'age':
+                        notcheck = True
+                        while notcheck:
+                            age = get_input(1,"Age: ")
+                            if age < 0 or age > 120:
+                                print(ColoredNotification("Invalid Age!!!", "red"))
+                                Wait()
+                                ClearTerminal()
+                            else:
+                                notcheck = False
+                        user['age'] = age
+
+                    elif answer == 'phone':
+                        notcheck = True
+                        while notcheck:
+                            tagged = False
+                            phone = input("Phone Number: ")
+                            if len(phone) != 11:
+                                tagged = True
+
+                            for char in list(phone):
+                                if char.isdigit() == False:
+                                    tagged = True
+                                    break
+
+                            if tagged == False:
+                                notcheck = False
+                            else:
+                                print(ColoredNotification("Invalid Number!!!", "red"))
+                                Wait()
+                                ClearTerminal()
+
+                        user['phone'] = phone
+
+                    elif answer == 'role':
+                        user['role'] = get_input(1,"Role: ",valid_options=[0,1])
+                    else:
+                        print(ColoredNotification("Invalid", "red"))
+                        Wait()
+
+                    cls.update_user_db(users_list)
+                    break
+                
+    @classmethod
+    def available_users_id(cls):
+        available_id_list = []
+        users_list = cls.get_users_list()
+        for user in users_list:
+            available_id_list.append(int(user['user_id']))
+
+        return available_id_list

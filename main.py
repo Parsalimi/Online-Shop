@@ -45,7 +45,21 @@ class OnlineShop:
             answer = input(ColoredNotification("> ", "cyan")).lower()
             if cls.logged_in: # Logged-in
                 
-                if cls.isAdmin: # Admin Enters
+                if answer == "cart":
+                    pass
+                
+                elif answer == "sign out":
+                    if cls.logged_in == False:
+                        print(ColoredNotification("You are not signed in!!!","red"))
+                        Wait()
+                    else:
+                        Users.write_the_latest_user_id("")
+                        cls.logged_in = False
+                        cls.selectedUser = ""
+                        print(ColoredNotification("You are signed out Successfully!!!", "green"))
+                        Wait()
+
+                elif cls.isAdmin: # Admin Enters
                     if answer == "item":
                         Item.ItemMenu()
                     elif answer == "category":
@@ -58,20 +72,6 @@ class OnlineShop:
                         print("Do you need a help? use this command '!help'")
                         Wait()
                     
-                else: # Normal User Enters
-                    if answer == "cart":
-                        pass
-                    
-                    elif answer == "sign out":
-                        if cls.logged_in == False:
-                            print(ColoredNotification("You are not signed in!!!","red"))
-                            Wait()
-                        else:
-                            Users.write_the_latest_user_id("")
-                            cls.logged_in = False
-                            cls.selectedUser = ""
-                            print(ColoredNotification("You are signed out Successfully!!!", "green"))
-                            Wait()
 
             else: # Not Logged-in
                 if answer == "sign up":

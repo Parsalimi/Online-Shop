@@ -189,7 +189,7 @@ class Category:
         if search_by == "id":
             search_value = get_input(1,"Category ID: ",return_none_on='n',valid_options=cls.available_category_id())
         elif search_by == 'name':
-            search_value = get_input(3,"Category Name: ",return_none_on='n')  # TODO: Must check a list of category names if available
+            search_value = get_input(3,"Category Name: ",return_none_on='n')
 
         cls.search_category(category_list, search_by=search_by, search_value=search_value)
 
