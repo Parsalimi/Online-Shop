@@ -83,7 +83,7 @@ class Category:
                 Wait()
 
     def getId():
-        with open("DB\\category_db\\id_last_cat_created","r") as file:
+        with open("DB\\category_db\\id_last_cat_created.txt","r") as file:
             last_categry_Id = file.read()
             if last_categry_Id != "":
                 last_categry_Id = int(last_categry_Id) + 1
@@ -113,7 +113,7 @@ class Category:
                 break
 
     def update_last_category_id(new_category_id):
-        with open("DB\\category_db\\id_last_cat_created","w") as file:
+        with open("DB\\category_db\\id_last_cat_created.txt","w") as file:
             file.write(str(new_category_id))
 
 

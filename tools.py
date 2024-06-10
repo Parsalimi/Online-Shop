@@ -99,3 +99,8 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
                     print(f"Please enter one of the following: {valid_options}")
             else:
                 return value
+            
+def is_str_contains_int(entry_str):
+    for char in list(entry_str):
+        if char.isdigit() == True:
+            return True

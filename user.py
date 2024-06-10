@@ -2,6 +2,7 @@
 from tools import *
 import getpass
 from datetime import datetime
+from cart import Cart
 
 class Users:
     def __init__(self, user_id, username, password, fname, lname, age, phone, role, order_ids, cart_id):
@@ -93,20 +94,83 @@ class Users:
 
     @classmethod
     def SignUpMenu(cls):    
+        users_list = Users.get_users_list()
+        
+
         ClearTerminal()
         print(ColoredNotification("Sign Up","green"))
         userId = Users.LastUserID()
-        username = input("Username: ")
+
+        notcheck = True
+        while notcheck:
+            tagged = False
+            username = input("Username: ")
+            # Check if that username exists
+            for user in users_list:
+                if user['username'] == username:
+                    print(ColoredNotification("That username is already EXISTS!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+            
+            if tagged == False:
+                notcheck = False
+
         password = input("Password: ")
-        fname = input("First Name: ")
-        lname = input("Last Name: ")
-        age = input("Age: ")
-        phone = input("Phone Number: ")
+        notcheck = True
+        while notcheck:
+            fname = input("First Name: ")
+            if is_str_contains_int(fname):
+                print(ColoredNotification("Does your first name really have a number in it!?!", "red"))
+                Wait()
+                ClearTerminal()
+            else:
+                notcheck = False
+            
+        notcheck = True
+        while notcheck:
+            lname = input("Last Name: ")
+            if is_str_contains_int(lname):
+                print(ColoredNotification("Does your last name really have a number in it!?!", "red"))
+                Wait()
+                ClearTerminal()
+            else:
+                notcheck = False
+
+        notcheck = True
+        while notcheck:
+            age = get_input(1,"Age: ")
+            if age < 0 or age > 120:
+                print(ColoredNotification("Invalid Age!!!", "red"))
+                Wait()
+                ClearTerminal()
+            else:
+                notcheck = False
+        
+        notcheck = True
+        while notcheck:
+            tagged = False
+            phone = input("Phone Number: ")
+            if len(phone) != 11:
+                tagged = True
+
+            for char in list(phone):
+                if char.isdigit() == False:
+                    tagged = True
+                    break
+
+            if tagged == False:
+                notcheck = False
+            else:
+                print(ColoredNotification("Invalid Number!!!", "red"))
+                Wait()
+                ClearTerminal()
+
         role = 0
         order_ids = []
-        cart_id = 0 #TODO: Get Cart ID for user
+        cart_id = Cart.create_new_cart()
         
-        # TODO: IF username exists
+        
         selectedUser = cls(userId, username, password, fname, lname, age,phone,role,order_ids,cart_id)
         with open("DB\\user_db\\users.txt","a") as file:
             file.write(f"{selectedUser.__dict__}\n")
@@ -126,6 +190,33 @@ class Users:
             Users.write_the_latest_user_id(selectedUser.user_id)
             return True
         
-    def user_managment_menu():
+    @classmethod
+    def user_managment_menu(cls):
         ClearTerminal()
-        print(ColoredNotification("User Management", "green"))
+        user_menu_flag = True
+        while user_menu_flag:
+            ClearTerminal()
+            print(ColoredNotification("User Management", "green"))
+            print(ColoredNotification("Add | Remove | Edit | Show | Search | Exit", "green"))
+            answer = input(ColoredNotification("> ", "cyan")).lower()
+            if answer == "add":
+                cls.add_user()
+            elif answer == "remove":
+                cls.remove_category()
+            elif answer == "edit":
+                cls.edit_category()
+            elif answer == "show":
+                cls.show_categories()
+            elif answer == "search":
+                cls.search_category_menu()
+            elif answer == "exit":
+                category_menu_flag = False
+                break
+            else:
+                print(ColoredNotification("Invalid Option", "red"))
+                Wait()
+
+    def add_user():
+        ClearTerminal()
+        user_id = Users.LastUserID()
+
