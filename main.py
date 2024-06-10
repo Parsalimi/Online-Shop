@@ -50,6 +50,8 @@ class OnlineShop:
                         Item.ItemMenu()
                     elif answer == "category":
                         Category.category_menu()
+                    elif answer == "user":
+                        Users.user_managment_menu()
                     elif answer == "!help":
                         pass
                     else:

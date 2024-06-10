@@ -1,18 +1,19 @@
-# user_id | username | password | fname | lname | phone | role | balance | cart_id #9
+# user_id | username | password | fname | lname | age | phone | role | order_ids | cart_id #10
 from tools import *
 import getpass
 from datetime import datetime
 
 class Users:
-    def __init__(self, user_id, username, password, fname, lname, phone, role, balance, cart_id):
+    def __init__(self, user_id, username, password, fname, lname, age, phone, role, order_ids, cart_id):
         self.user_id = user_id
         self.username = username
         self.password = password
         self.fname = fname
         self.lname = lname
+        self.age = age
         self.phone = phone
         self.role = role
-        self.balance = balance
+        self.order_ids = order_ids
         self.cart_id = cart_id
 
     @classmethod
@@ -33,9 +34,10 @@ class Users:
                                        user['password'],
                                        user['fname'],
                                        user['lname'],
+                                       user['age'],
                                        user['phone'],
                                        user['role'],
-                                       user['balance'],
+                                       user['order_ids'],
                                        user['cart_id'])
                     return selectedUser
                 
@@ -56,9 +58,10 @@ class Users:
                                        user['password'],
                                        user['fname'],
                                        user['lname'],
+                                       user['age'],
                                        user['phone'],
                                        user['role'],
-                                       user['balance'],
+                                       user['order_ids'],
                                        user['cart_id'])
                     return selectedUser
                 
@@ -97,13 +100,14 @@ class Users:
         password = input("Password: ")
         fname = input("First Name: ")
         lname = input("Last Name: ")
+        age = input("Age: ")
         phone = input("Phone Number: ")
         role = 0
-        balance = 0
+        order_ids = []
         cart_id = 0 #TODO: Get Cart ID for user
         
         # TODO: IF username exists
-        selectedUser = cls(userId, username, password, fname, lname, phone,role,balance,cart_id)
+        selectedUser = cls(userId, username, password, fname, lname, age,phone,role,order_ids,cart_id)
         with open("DB\\user_db\\users.txt","a") as file:
             file.write(f"{selectedUser.__dict__}\n")
         
@@ -121,3 +125,7 @@ class Users:
         if selectedUser != None:
             Users.write_the_latest_user_id(selectedUser.user_id)
             return True
+        
+    def user_managment_menu():
+        ClearTerminal()
+        print(ColoredNotification("User Management", "green"))
