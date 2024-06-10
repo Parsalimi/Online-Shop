@@ -78,6 +78,9 @@ class Category:
             elif answer == "exit":
                 category_menu_flag = False
                 break
+            else:
+                print(ColoredNotification("Invalid Option", "red"))
+                Wait()
 
     def getId():
         with open("DB\\category_db\\id_last_cat_created","r") as file:
@@ -120,11 +123,12 @@ class Category:
 
         ClearTerminal()
         cls.show_categories()
-        category_id = input("Enter category ID to remove: ")
-        for category in category_list:
-            if category["category_id"] == int(category_id):
-                category['is_category_deleted'] = 1
-        cls.update_category_db(category_list)
+        category_id = get_input(1,"(0 to exit)\nEnter category ID to remove: ",valid_options=cls.available_category_id(),return_none_on='0')
+        if category_id:
+            for category in category_list:
+                if category["category_id"] == int(category_id):
+                    category['is_category_deleted'] = 1
+            cls.update_category_db(category_list)
         
     @classmethod
     def update_category_db(cls, category_list):
@@ -138,30 +142,14 @@ class Category:
         category_list = cls.get_categories_list()
         ClearTerminal()
         cls.show_categories()
-        category_id = input("Enter Category ID to edit: ")
-        for category in category_list:
-            if category["category_id"] == int(category_id) and category['is_category_deleted'] == 0:
-                category['name'] = input("Enter new CATEGORY Name: ")
+        category_id = get_input(1,"(0 to exit)\nEnter Category ID to edit: ",valid_options=cls.available_category_id(),return_none_on='0')
+        if category_id:
+            for category in category_list:
+                if category["category_id"] == int(category_id) and category['is_category_deleted'] == 0:
+                    category['name'] = input("Enter new CATEGORY Name: ")
 
-                cls.update_category_db(category_list)
-                break
-
-    @classmethod
-    def search_category(cls, category_list, search_by=None, search_value=None):
-        table_row_list = []
-        
-        # Filtering based on search_by criteria
-        if search_by == 'id':
-            category_list = [category for category in category_list if category['category_id'] == search_value and category['is_category_deleted'] == 0]
-        elif search_by == 'name':
-            category_list = [category for category in category_list if category['name'] == search_value and category['is_category_deleted'] == 0]
-
-        # Collecting the results
-        for category in category_list:
-            if category['is_category_deleted'] == 0:
-                table_row_list.append([category['category_id'], category['name']])
-
-        cls.create_table_category(table_row_list)
+                    cls.update_category_db(category_list)
+                    break
 
     def create_table_category(table_row_list: list):
         table = PrettyTable()
@@ -171,6 +159,23 @@ class Category:
         print(table)
         Wait()
 
+    @classmethod
+    def search_category(cls, category_list, search_by=None, search_value=None):
+        table_row_list = []
+
+        # Filtering based on search_by criteria
+        if search_by == 'id':
+            for category in category_list:
+                if category['category_id'] == search_value and category['is_category_deleted'] == 0:
+                    table_row_list.append([category['category_id'], category['name']])
+                    break
+        elif search_by == 'name':
+            for category in category_list:
+                if category['name'].lower() == search_value and category['is_category_deleted'] == 0:
+                    table_row_list.append([category['category_id'], category['name']])
+                    break
+
+        cls.create_table_category(table_row_list)
 
     @classmethod
     def search_category_menu(cls):
@@ -182,7 +187,7 @@ class Category:
         search_by = get_input(3, "Search By (id/name): ", ['id', 'name', ], 'n')
         search_value = None
         if search_by == "id":
-            search_value = get_input(1,"Category ID: ",return_none_on='n') # TODO: Must check a list of category names if available
+            search_value = get_input(1,"Category ID: ",return_none_on='n',valid_options=cls.available_category_id())
         elif search_by == 'name':
             search_value = get_input(3,"Category Name: ",return_none_on='n')  # TODO: Must check a list of category names if available
 
