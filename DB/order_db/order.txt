@@ -1,0 +1,2 @@
+{'order_id': 1, 'products_set_id': [5, 7], 'total_price': 1590.0, 'payment_id': 1}
+{'order_id': 2, 'products_set_id': [8, 9], 'total_price': 3180.0, 'payment_id': 2}

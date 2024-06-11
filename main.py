@@ -11,6 +11,7 @@ class OnlineShop:
     logged_in = False
     isAdmin = False
 
+    #TODO: Update User data each time
     @classmethod
     def ShowMainMenu(cls):
         with open("DB\\user_db\\the_latest_login_id.txt","r") as file:
@@ -128,7 +129,7 @@ class OnlineShop:
         while flag:
             ClearTerminal()
             print(ColoredNotification("Cart Menu:", "cyan"))
-            choice = (input(ColoredNotification("Show | Edit | Remove | Exit\n> ", "green"))).lower()
+            choice = (input(ColoredNotification("Show | Edit | Remove | checkout | Exit\n> ", "green"))).lower()
             if choice == 'exit':
                 flag = False
                 break
@@ -138,6 +139,9 @@ class OnlineShop:
                 Cart.remove_product_from_cart(cls.selectedUser.cart_id)
             elif choice == "edit":
                 Cart.edit_product_of_cart(cls.selectedUser.cart_id)
+            elif choice == 'checkout':
+                Cart.cart_checkout(cls.selectedUser.cart_id)
+                break
 
         
 ##########################

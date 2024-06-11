@@ -120,7 +120,25 @@ class ProductSet():
         return cost_free
     
 
-    # COPYING FROM ITEM - THEY'RE NOT RELATED TO Product Set
+    @classmethod
+    def update_items_list_after_check_out(cls, product_set_ids_list):
+        product_set_list = cls.get_carts_list()
+        check_out_item_name_and_count_list = []
+
+        for prodcut in product_set_list:
+            if prodcut['product_set_id'] in product_set_ids_list:
+                item_name = prodcut['name']
+                item_count = prodcut['count']
+                check_out_item_name_and_count_list.append([item_name,item_count])
+
+        items_list = cls.get_items_list()
+        for item in items_list:
+            for product in check_out_item_name_and_count_list:
+                if item['name'] == product[0]:
+                    item['count'] -= product[1]
+
+        cls.update_item_db(items_list)
+    
     @classmethod
     def count_of_item_are_available(cls, item_name_to_buy): #gets name and returns it count
         items_list = cls.get_items_list()
@@ -128,6 +146,7 @@ class ProductSet():
             if item['name'] == item_name_to_buy:
                 return item['count']
     
+    # COPYING FROM ITEM - THEY'RE NOT RELATED TO Product Set
     @staticmethod
     def get_items_list():
         items_list = []
@@ -135,3 +154,17 @@ class ProductSet():
             for line in file.readlines():
                 items_list.append(eval(line))
             return items_list
+
+    @classmethod
+    def update_item_db(cls, items_list):
+        with open('DB\\item_db\\item.txt', 'w') as file:
+            for item in items_list:
+                selectedItem = {'item_id': item['item_id'], 
+                                'name': item['name'], 
+                                'price': item['price'], 
+                                'count': item['count'], 
+                                'category_id': item['category_id'], 
+                                'detail': item['detail'], 
+                                'min_age': item['min_age'], 
+                                'is_item_deleted': item['is_item_deleted']}
+                file.write(f'{selectedItem}\n')

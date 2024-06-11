@@ -60,6 +60,9 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
 
     type 4:
         get str without numbers
+    
+    type 5:
+        get str without alphabet char
     """
     if type == 1:  # get int
         while True:
@@ -115,6 +118,22 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
                 return None
             if any(char.isdigit() for char in value):
                 print("Invalid input. Please enter a string without numbers.")
+            else:
+                if valid_options:
+                    if value in valid_options:
+                        return value
+                    else:
+                        print(f"Please enter one of the following: {valid_options}")
+                else:
+                    return value
+
+    if type == 5:  # get str without alphabet char
+        while True:
+            value = input(prompt).strip()
+            if value == return_none_on:
+                return None
+            if any(char.isalpha() for char in value):
+                print("Invalid input. Please enter a string without alphabetic characters.")
             else:
                 if valid_options:
                     if value in valid_options:

@@ -398,9 +398,10 @@ class Item():
         possible_id_to_select = []
         items_list = cls.get_items_list()
         for item in items_list:
-            if search_word in item['name'].lower() or search_word in Category.category_id_to_name(item['category_id']).lower() and user_age >= item['min_age']:
-                table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
-                possible_id_to_select.append(item['item_id'])
+            if search_word in item['name'].lower() or search_word in Category.category_id_to_name(item['category_id']).lower():
+                if user_age >= item['min_age']:
+                    table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
+                    possible_id_to_select.append(item['item_id'])
 
         cls.create_table_item_for_user(table_row_list)
         return possible_id_to_select

@@ -1,6 +1,8 @@
 # cart_id | products_set_id | Total Price
 from productset import ProductSet
 from tools import *
+from payment import Payment
+from order import Order
 
 class Cart:
     def __init__(self, cart_id, products_set_id: list, total_price):
@@ -136,3 +138,65 @@ class Cart:
                     print(ColoredNotification("Cart is empty!!!","red"))
                     Wait()
                     break
+
+    @classmethod 
+    def cart_checkout(cls,cart_id):
+        ClearTerminal()
+        carts_list = cls.get_carts_list()
+        for cart in carts_list:
+            if cart_id == cart['cart_id']:
+                if len(cart['products_set_id']) > 0:
+                    cls.show_cart(1, cart_id)
+                    choice = get_input(3, f"Cart ID: {cart['cart_id']}\nFinal Price: {cart['total_price']}\n\nWould you like to proceed to checkout? ('y' to Proceed)\n> ")
+                    if choice == 'y':
+                        #card_num = get_input(5,"Please enter your credit card number: ")
+                        payment_id = Payment.create_new_payment(cart['total_price'])
+                        order_id = Order.create_new_order(cart['products_set_id'],cart['total_price'],payment_id)
+                        ProductSet.update_items_list_after_check_out(cart['products_set_id'])
+                        cls.update_user_after_checkout(order_id, cart_id)
+                        print(ColoredNotification("The checkout process was successful!!!","green"))
+                        Wait()
+                        break
+
+                else:
+                    print(ColoredNotification("Cart is empty!!!","red"))
+                    Wait()
+                    break
+                
+
+    @classmethod
+    def update_user_after_checkout(cls,order_id, cart_id): # Add new order_id to order_ids & Give user a new cart ID
+        users_list = cls.get_users_list()
+        
+        for user in users_list:
+            if user['cart_id'] == cart_id:
+                user['cart_id'] = Cart.create_new_cart()
+                user['order_ids'].append(order_id)
+
+
+        cls.update_user_db(users_list)
+
+    # COPYING FROM USER - THEY'RE NOT RELATED TO Product Set
+    @classmethod
+    def update_user_db(cls, users_list):
+        with open('DB\\user_db\\users.txt', 'w') as file:
+            for user in users_list:
+                selectedUser = {'user_id': user['user_id'], 
+                                'username': user['username'], 
+                                'password': user['password'], 
+                                'fname': user['fname'], 
+                                'lname': user['lname'], 
+                                'age': user['age'], 
+                                'phone': user['phone'], 
+                                'role': user['role'], 
+                                'order_ids': user['order_ids'], 
+                                'cart_id': user['cart_id']}
+                
+                file.write(f'{selectedUser}\n')
+
+    def get_users_list():
+        users_list = []
+        with open('DB\\user_db\\users.txt','r') as file:
+            for line in file.readlines():
+                users_list.append(eval(line))
+            return users_list
