@@ -421,3 +421,11 @@ class Users:
             available_id_list.append(int(user['user_id']))
 
         return available_id_list
+    
+    @classmethod
+    def find_user_orders(cls, user_id):
+        users_list = cls.get_users_list()
+        for user in users_list:
+            if user['user_id'] == user_id:
+                return user['order_ids']
+

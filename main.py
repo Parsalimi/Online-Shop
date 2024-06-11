@@ -31,7 +31,7 @@ class OnlineShop:
             # When Admins Enter
             if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification("Admin Panel: Item | Category | User | Log Order","red"))
+                print(ColoredNotification("Admin Panel: Item | Category | User | UserOrder","red"))
                 print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop | Order", "green"))
 
             # When Normal Users Enter
@@ -61,12 +61,33 @@ class OnlineShop:
                     if cls.logged_in == False:
                         print(ColoredNotification("You are not signed in!!!","red"))
                         Wait()
+
                     else:
                         Users.write_the_latest_user_id("")
                         cls.logged_in = False
                         cls.selectedUser = ""
                         print(ColoredNotification("You are signed out Successfully!!!", "green"))
                         Wait()
+
+                elif answer == 'userorder':
+                    ClearTerminal()
+                    Users.show_users()
+                    
+                    notcheck = True
+                    while notcheck:
+                        tagged = False
+                        user_id = get_input(1, "Please enter the User ID to view their orders: ")
+                        
+                        if user_id not in Users.available_users_id():
+                            print(ColoredNotification("That user does not exist!!!", "red"))
+                            Wait()
+                            tagged = True
+                        
+                        if tagged == False:
+                            notcheck = False
+                            
+                    Order.show_user_orders(Users.find_user_orders(user_id))
+                    Wait()
 
                 elif cls.isAdmin: # Admin Enters
                     if answer == "item":
@@ -88,7 +109,7 @@ class OnlineShop:
                 elif answer == "sign in":
                     if Users.SignInMenu() == True:
                         cls.logged_in = True
-
+        
     @classmethod
     def user_shopping_menu(cls):
         while True:
