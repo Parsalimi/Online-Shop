@@ -104,10 +104,10 @@ class Users:
         notcheck = True
         while notcheck:
             tagged = False
-            username = input("Username: ")
+            username = get_input(3, "Username: ")
             # Check if that username exists
             for user in users_list:
-                if user['username'] == username:
+                if user['username'].lower() == username:
                     print(ColoredNotification("That username is already EXISTS!!!", "red"))
                     Wait()
                     ClearTerminal()

@@ -1,16 +1,17 @@
-# item_id | name | price | count | category_id | detail | is_item_deleted
+# item_id | name | price | count | category_id | detail | min_age | is_item_deleted
 from tools import *
 from prettytable import PrettyTable
 from category import Category
 
 class Item():
-    def __init__(self, item_id, name, price, count, category_id, detail, is_item_deleted):
+    def __init__(self, item_id, name, price, count, category_id, detail, min_age, is_item_deleted):
         self.item_id = item_id
         self.name = name
         self.price = price
         self.count = count
         self.category_id = category_id
         self.detail = detail
+        self.min_age = min_age
         self.is_item_deleted = is_item_deleted
 
     def getId():
@@ -51,13 +52,29 @@ class Item():
     
     @classmethod
     def add_item(cls):
+        items_list = cls.get_items_list()
         ClearTerminal()
         flag = True
         while flag:
             item_id = Item.getId()
-            name = input("item Name: ")
-            price = float(input("item Price: "))
-            count = int(input("item Count: "))
+
+            notcheck = True
+            while notcheck:
+                tagged = False
+                name = get_input(3, "item Name: ")
+                # Check if that item name exists
+                for item in items_list:
+                    if item['name'].lower() == name:
+                        print(ColoredNotification("That item name is already EXISTS!!!", "red"))
+                        Wait()
+                        ClearTerminal()
+                        tagged = True
+            
+                if tagged == False:
+                    notcheck = False
+            
+            price = get_input(2,"item Price: ")
+            count = get_input(1,"item Count: ")
 
             select_categpry_result = Category.select_category()
             if select_categpry_result == False:
@@ -66,8 +83,19 @@ class Item():
                 category_id = select_categpry_result
 
             detail = input("item Detail: ")
+
+            notcheck = True
+            while notcheck:
+                min_age = get_input(1,"Minimum Age: ")
+                if min_age < 0 or min_age > 120:
+                    print(ColoredNotification("Invalid Age!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                else:
+                    notcheck = False
+
             is_item_deleted = 0
-            selectedItem = cls(item_id,name,price,count,category_id,detail,is_item_deleted)
+            selectedItem = cls(item_id,name,price,count,category_id,detail,min_age,is_item_deleted)
             with open("DB\\item_db\\item.txt", "a") as file:
                 file.write(f'{selectedItem.__dict__}\n')
 
@@ -102,23 +130,52 @@ class Item():
             for item in items_list:
                 if item["item_id"] == item_id:
                     ClearTerminal()
-                    choice = get_input(3,"1. Edit Name\n2. Edit Price\n3. Edit Count\n4. Edit Category\n5. Edit Detail\n> ",valid_options=['1','2','3','4','5'])
-                    if choice == '1':
-                        item['name'] = get_input(3, "Enter new name: ")
-                    elif choice == '2':
+                    choice = get_input(3,"Name | Price | Count | Category | Age | Detail\n> ",valid_options=['name','price','count','category','age','detail'])
+                    
+                    if choice == 'name':
+                        notcheck = True
+                        while notcheck:
+                            tagged = False
+                            name = get_input(3, "Enter new item Name: ")
+                            # Check if that item name exists
+                            for item in items_list:
+                                if item['name'].lower() == name:
+                                    print(ColoredNotification("That item name is already EXISTS!!!", "red"))
+                                    Wait()
+                                    ClearTerminal()
+                                    tagged = True
+                        
+                            if tagged == False:
+                                notcheck = False
+
+                        item['name'] = name
+
+                    elif choice == 'price':
                         item['price'] = get_input(2, "Enter new price: ")
-                    elif choice == '3':
+                    elif choice == 'count':
                         item['count'] = get_input(1, "Enter new count: ")
-                    elif choice == '4':
+                    elif choice == 'category':
                         item['category_id'] = Category.select_category()
-                    elif choice == '5':
+
+                    elif choice == 'age':
+                        notcheck = True
+                        while notcheck:
+                            min_age = get_input(1,"Minimum Age: ")
+                            if min_age < 0 or min_age > 120:
+                                print(ColoredNotification("Invalid Age!!!", "red"))
+                                Wait()
+                                ClearTerminal()
+                            else:
+                                notcheck = False
+
+                        item['min_age'] = min_age
+
+                    elif choice == 'detail':
                         item['detail'] = get_input(3,"Enter new detail: ")
 
                     cls.update_item_db(items_list)
                     break
-
-                
-    
+ 
     @classmethod
     def show_item(cls):
         items_list = cls.get_items_list()
@@ -126,19 +183,19 @@ class Item():
         print(ColoredNotification("All Items", "green"))
         
         table = PrettyTable()
-        table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail"]
+        table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail", 'min_age']
         for item in items_list:
             if item['is_item_deleted'] == 0:
-                table.add_row([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail']])
+                table.add_row([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
         print(table)
         Wait()
 
     def create_table_item(table_row_list: list):
         ClearTerminal()
         table = PrettyTable()
-        table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail"]
+        table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail", 'min_age']
         for table_row in table_row_list:
-            table.add_row([table_row[0], table_row[1], table_row[2], table_row[3], table_row[4], table_row[5]])
+            table.add_row([table_row[0], table_row[1], table_row[2], table_row[3], table_row[4], table_row[5], table_row[6]])
         print(table)
         Wait()
     
@@ -154,7 +211,7 @@ class Item():
             if search_by == 'id':
                 for item in items_list:
                     if item['item_id'] == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
                         only_one_result = True
                         break
 
@@ -163,19 +220,19 @@ class Item():
                     item_name = str(item['name'])
                     item_name = item_name.lower()
                     if item_name == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
                         only_one_result = True
                         break
                     
             elif search_by == 'category':
                 for item in items_list:
                     if item['category_id'] == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
 
             else:
                 for item in items_list:
                     if item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
 
         if only_one_result == False:
             # Filter Price
@@ -271,7 +328,7 @@ class Item():
     def update_item_db(cls, items_list):
         with open('DB\\item_db\\item.txt', 'w') as file:
             for item in items_list:
-                selectedItem = cls(item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'], item['is_item_deleted'])
+                selectedItem = cls(item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'], item['min_age'], item['is_item_deleted'])
                 file.write(f'{selectedItem.__dict__}\n')
 
     @classmethod

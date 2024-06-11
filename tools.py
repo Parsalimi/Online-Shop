@@ -57,13 +57,16 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
 
     type 3:
         Gets str
+
+    type 4:
+        get str without numbers
     """
-    if type == 1: # get int
+    if type == 1:  # get int
         while True:
-            while True:
-                value = input(prompt).strip().lower()
-                if value == return_none_on:
-                    return None
+            value = input(prompt).strip().lower()
+            if value == return_none_on:
+                return None
+            try:
                 value = int(value)
                 if valid_options:
                     if value in valid_options:
@@ -72,20 +75,25 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
                         print(f"Please enter one of the following: {valid_options}")
                 else:
                     return value
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
     
     elif type == 2: # get float
         while True:
             value = input(prompt).strip().lower()
             if value == return_none_on:
                 return None
-            value = float(value)
-            if valid_options:
-                if value in valid_options:
-                    return value
+            try:
+                value = float(value)
+                if valid_options:
+                    if value in valid_options:
+                        return value
+                    else:
+                        print(f"Please enter one of the following: {valid_options}")
                 else:
-                    print(f"Please enter one of the following: {valid_options}")
-            else:
-                return value
+                    return value
+            except ValueError:
+                print("Invalid input. Please enter a valid float.")
 
     if type == 3: # get str input
         while True:
@@ -99,6 +107,23 @@ def get_input(type:int, prompt:str, valid_options:list=None,return_none_on: str=
                     print(f"Please enter one of the following: {valid_options}")
             else:
                 return value
+            
+    if type == 4:  # get str without numbers
+        while True:
+            value = input(prompt).strip()
+            if value == return_none_on:
+                return None
+            if any(char.isdigit() for char in value):
+                print("Invalid input. Please enter a string without numbers.")
+            else:
+                if valid_options:
+                    if value in valid_options:
+                        return value
+                    else:
+                        print(f"Please enter one of the following: {valid_options}")
+                else:
+                    return value
+
             
 def is_str_contains_int(entry_str):
     for char in list(entry_str):
