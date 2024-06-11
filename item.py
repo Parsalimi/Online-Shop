@@ -455,4 +455,10 @@ class Item():
             print(ColoredNotification(f"Item ID ({item_id_to_buy}) wasn't found!!!","red"))
             Wait()
 
+    @classmethod
+    def convert_item_id_to_name(cls, item_id):
+        items_list = cls.get_items_list()
+        for item in items_list:
+            if item['item_id'] == item_id:
+                return item['name']
 

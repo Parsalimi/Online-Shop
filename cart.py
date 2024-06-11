@@ -56,9 +56,21 @@ class Cart:
                 selectedCart = cls(cart['cart_id'],cart['products_set_id'],cart['total_price'])
                 file.write(f'{selectedCart.__dict__}\n')
 
-    def count_items_in_cart(user_cart_id):
-        carts_list = Cart.get_carts_list()
+    @classmethod
+    def count_items_in_cart(cls, user_cart_id):
+        carts_list = cls.get_carts_list()
         for cart in carts_list:
             if cart['cart_id'] == user_cart_id:
                 item_count_in_cart = len(cart['products_set_id'])
         return item_count_in_cart
+    
+    @classmethod
+    def check_is_item_id_exists_in_cart(cls, user_cart_id, item_name):
+        carts_list = cls.get_carts_list()
+        for cart in carts_list:
+            if user_cart_id == cart['cart_id']:
+                for products_set_id in cart['products_set_id']:
+                    if ProductSet.check_if_item_name_exists_in_product_set(products_set_id, item_name):
+                        return True
+                    
+        return False
