@@ -2,6 +2,7 @@ from tools import *
 from item import Item
 from user import Users
 from category import Category
+from cart import Cart
 
 class OnlineShop:
     items_list = []
@@ -29,12 +30,12 @@ class OnlineShop:
             if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
                 print(ColoredNotification("Admin Panel: Item | Category | User | Log Order","red"))
-                print(ColoredNotification("Cart(0) | Sign Out | Categories | Search", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop", "green"))
 
             # When Normal Users Enter
             else:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification("Cart(0) | Sign Out | Categories | Search", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop", "green"))
 
     @classmethod
     def MainMenu(cls):
@@ -45,8 +46,8 @@ class OnlineShop:
             answer = input(ColoredNotification("> ", "cyan")).lower()
             if cls.logged_in: # Logged-in
                 
-                if answer == "cart":
-                    pass
+                if answer == "shop":
+                    cls.user_shopping_menu()
                 
                 elif answer == "sign out":
                     if cls.logged_in == False:
@@ -80,6 +81,33 @@ class OnlineShop:
                     if Users.SignInMenu() == True:
                         cls.logged_in = True
 
+    @classmethod
+    def user_shopping_menu(cls):
+        while True:
+            ClearTerminal()
+            choice = (input(ColoredNotification("Shopping\nFilter | Exit\nFeel free to type anything to search\n> ","cyan"))).lower()
+            if choice == 'exit':
+                break
+            elif choice == 'filter':
+                possible_id_to_select = Item.user_search_item_menu(cls.selectedUser.age)
+                if len(possible_id_to_select) > 0:
+                    item_id = get_input(1,"(0 to exit)\nEnter Item ID that you want to buy: ",return_none_on=0,valid_options=possible_id_to_select)
+                    if item_id:
+                        buy_count = get_input(1,"How many Item do you want to buy: ")
+                        Item.item_id_to_buy_it(item_id, cls.selectedUser.age, buy_count, cls.selectedUser.cart_id)
+                else:
+                    print(ColoredNotification("No Result!!!", "red"))
+                    Wait()
+            else:
+                possible_id_to_select = Item.user_free_search(choice, cls.selectedUser.age)
+                if len(possible_id_to_select) > 0:
+                    item_id = get_input(1,"(0 to exit)\nEnter Item ID that you want to buy: ",return_none_on=0,valid_options=possible_id_to_select)
+                    if item_id:
+                        buy_count = get_input(1,"How many Item do you want to buy: ")
+                        Item.item_id_to_buy_it(item_id, cls.selectedUser.age, buy_count, cls.selectedUser.cart_id)
+                else:
+                    print(ColoredNotification("No Result!!!", "red"))
+                    Wait()
                 
 
 

@@ -2,6 +2,7 @@
 from tools import *
 from prettytable import PrettyTable
 from category import Category
+from cart import Cart
 
 class Item():
     def __init__(self, item_id, name, price, count, category_id, detail, min_age, is_item_deleted):
@@ -44,7 +45,7 @@ class Item():
             elif answer == "show":
                 cls.show_item()
             elif answer == "search":
-                cls.search_item_menu()
+                cls.admin_search_item_menu()
             elif answer == "exit":
                 item_menu_flag = False
                 break
@@ -190,7 +191,8 @@ class Item():
         print(table)
         Wait()
 
-    def create_table_item(table_row_list: list):
+    @staticmethod
+    def create_table_item_for_admin(table_row_list: list):
         ClearTerminal()
         table = PrettyTable()
         table.field_names = ["ID", "Name", "Price", "Count", "Category_id", "detail", 'min_age']
@@ -198,21 +200,39 @@ class Item():
             table.add_row([table_row[0], table_row[1], table_row[2], table_row[3], table_row[4], table_row[5], table_row[6]])
         print(table)
         Wait()
+
+    @staticmethod
+    def create_table_item_for_user(table_row_list: list):
+        ClearTerminal()
+        table = PrettyTable()
+        table.field_names = ["ID","Name", "Price", "Count", "Category_id", "detail"]
+        for table_row in table_row_list:
+            table.add_row([table_row[0],table_row[1], table_row[2], table_row[3], table_row[4], table_row[5]])
+        print(table)
+        Wait()
     
     @classmethod
-    def search_items(cls, items_list, search_by=None, search_value=None, min_count:int=None, max_count:int=None, 
-                     min_price:int=None, max_price:int=None,sort_by=None, ascending=True):
+    def search_items(cls, items_list:list, search_by=None, search_value=None, min_count:int=None, max_count:int=None, 
+                     min_price:int=None, max_price:int=None,sort_by=None, ascending=True, user_age:int=None):
         
         only_one_result = False
         table_row_list = []
+        possible_id_to_select = []
 
+        # if search from user_search_item_menu check the user age
+        if user_age:
+            for index, item in enumerate(items_list):
+                if user_age < item['min_age']:
+                    items_list.pop(index)
+                    
         # Filtering items based on search criteria
         if search_by:
             if search_by == 'id':
                 for item in items_list:
                     if item['item_id'] == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
                         only_one_result = True
+                        possible_id_to_select.append(item['item_id'])
                         break
 
             elif search_by == 'name':
@@ -220,19 +240,22 @@ class Item():
                     item_name = str(item['name'])
                     item_name = item_name.lower()
                     if item_name == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
                         only_one_result = True
+                        possible_id_to_select.append(item['item_id'])
                         break
                     
             elif search_by == 'category':
                 for item in items_list:
                     if item['category_id'] == search_value and item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
+                        possible_id_to_select.append(item['item_id'])
 
             else:
                 for item in items_list:
                     if item['is_item_deleted'] == 0:
-                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], item['category_id'], item['detail'],item['min_age']])
+                        table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
+                        possible_id_to_select.append(item['item_id'])
 
         if only_one_result == False:
             # Filter Price
@@ -240,22 +263,26 @@ class Item():
                 for index, item in enumerate(table_row_list):
                     if item[2] < min_price:
                         table_row_list.pop(index)
+                        possible_id_to_select.remove(item['item_id'])
             
             if max_price is not None:
                 for index, item in enumerate(table_row_list):
                     if item[2] > max_price:
                         table_row_list.pop(index)
+                        possible_id_to_select.remove(item['item_id'])
 
             # Filter Count
             if min_count is not None:
                 for index, item in enumerate(table_row_list):
                     if item[3] < min_count:
                         table_row_list.pop(index)
+                        possible_id_to_select.remove(item['item_id'])
             
             if max_count is not None:
                 for index, item in enumerate(table_row_list):
                     if item[3] > max_count:
                         table_row_list.pop(index)
+                        possible_id_to_select.remove(item['item_id'])
 
 
 
@@ -266,10 +293,15 @@ class Item():
                 else:
                     table_row_list = sort_list(table_row_list,3,ascending)
 
-        cls.create_table_item(table_row_list)
+        if user_age:
+            cls.create_table_item_for_user(table_row_list)
+        else:
+            cls.create_table_item_for_admin(table_row_list)
+
+        return possible_id_to_select
 
     @classmethod
-    def search_item_menu(cls):
+    def admin_search_item_menu(cls):
         ClearTerminal()
         items_list = cls.get_items_list()
         only_one_result = False
@@ -278,23 +310,23 @@ class Item():
         search_by = get_input(3, "Search By (id/name/category): ", ['id', 'name', 'category'], 'n')
         search_value = None
         if search_by == "id":
-            search_value = get_input(1, "Item ID: ", return_none_on='n')
+            search_value = get_input(1, "Item ID: ", valid_options=cls.available_item_id(), return_none_on='n')
             only_one_result = True
         elif search_by == 'name':
-            search_value = get_input(3, "Item Name: ", valid_options=cls.available_item_id(), return_none_on='n')
+            search_value = get_input(3, "Item Name: ", return_none_on='n')
             only_one_result = True
         elif search_by == 'category':
             ClearTerminal()
+            Category.show_categories()
             search_value = get_input(1, "Item Category (ID): ", valid_options=Category.available_category_id(), return_none_on='n')
 
-        sort_by, sort_by, min_price, max_price, min_count, max_count = None,None,None,None,None,None
+        ascending, sort_by, min_price, max_price, min_count, max_count = True, None,None,None,None,None
         if only_one_result == False:
             sort_by = get_input(3, "Sort By (price/count): ", ['price', 'count'], return_none_on='n')
-            sort_order = None
             if sort_by:
-                sort_order = get_input(3, f"Ascending or Descending on {sort_by}? (a/d): ", ['a', 'd'], return_none_on='n')
-            else:
-                sort_order = None
+                ascending = get_input(3, f"Ascending or Descending on {sort_by}? (a/d): ", ['a', 'd'], return_none_on='n')
+                if ascending == 'd':
+                    ascending = False
 
             min_price = get_input(2, "MIN PRICE: ", return_none_on='n')
             max_price = get_input(2, "MAX PRICE: ", return_none_on='n')
@@ -310,8 +342,69 @@ class Item():
             max_count=max_count,
             min_price=min_price,
             max_price=max_price,
+            ascending=ascending,
             sort_by=sort_by
         )
+
+    @classmethod
+    def user_search_item_menu(cls, user_age):
+        ClearTerminal()
+        items_list = cls.get_items_list()
+        only_one_result = False
+        print(ColoredNotification("Enter 'n' if you don't want to filter that attribute!!!", "red"))
+
+        search_by = get_input(3, "Search By (name/category): ", ['name', 'category'], 'n')
+        search_value = None
+        if search_by == 'name':
+            search_value = get_input(3, "Item Name: ", return_none_on='n')
+            only_one_result = True
+        elif search_by == 'category':
+            ClearTerminal()
+            Category.show_categories()
+            search_value = get_input(1, "Item Category (ID): ", valid_options=Category.available_category_id(), return_none_on='n')
+
+        ascending, sort_by, min_price, max_price, min_count, max_count = True, None,None,None,None,None
+        if only_one_result == False:
+            sort_by = get_input(3, "Sort By (price/count): ", ['price', 'count'], return_none_on='n')
+            if sort_by:
+                ascending = get_input(3, f"Ascending or Descending on {sort_by}? (a/d): ", ['a', 'd'], return_none_on='n')
+                if ascending == 'd':
+                    ascending = False
+
+            min_price = get_input(2, "MIN PRICE: ", return_none_on='n')
+            max_price = get_input(2, "MAX PRICE: ", return_none_on='n')
+            min_count = get_input(2, "MIN COUNT: ", return_none_on='n')
+            max_count = get_input(2, "MAX COUNT: ", return_none_on='n')
+
+        # Use the consolidated search_items method based on the inputs
+        possible_id_to_select = cls.search_items(
+            items_list,
+            search_by=search_by,
+            search_value=search_value,
+            min_count=min_count,
+            max_count=max_count,
+            min_price=min_price,
+            max_price=max_price,
+            sort_by=sort_by,
+            ascending=ascending,
+            user_age=user_age
+        )
+
+        return possible_id_to_select
+        
+    @classmethod
+    def user_free_search(cls, search_word:str,user_age):
+        table_row_list = []
+        possible_id_to_select = []
+        items_list = cls.get_items_list()
+        for item in items_list:
+            if search_word in item['name'].lower() or search_word in Category.category_id_to_name(item['category_id']).lower() and user_age >= item['min_age']:
+                table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
+                possible_id_to_select.append(item['item_id'])
+
+        cls.create_table_item_for_user(table_row_list)
+        return possible_id_to_select
+
 
     def get_items_list():
         items_list = []
@@ -340,3 +433,26 @@ class Item():
                 available_id_list.append(int(item['item_id']))
 
         return available_id_list
+
+    @classmethod
+    def item_id_to_buy_it(cls, item_id_to_buy,user_age, buy_count, user_cart_id):
+        was_it_right = False
+        items_list = cls.get_items_list()
+        for item in items_list:
+            if item['item_id'] == item_id_to_buy:
+                if user_age >= item['min_age']:
+                    if buy_count <= item['count']:
+                        was_it_right = True
+                        Cart.add_item_to_user_cart(user_cart_id, item['name'], item['price'], buy_count)
+                    else:
+                        print(ColoredNotification(f"Sorry, You want ({buy_count}), but we dont have that much right now!\nWe have only ({item['count']})","cyan"))
+                        Wait()
+                else:
+                    print(ColoredNotification(f"You are ({user_age}) years old!!!\nCome back when you are ({item['min_age']})!","red"))
+                    Wait()
+
+        if was_it_right == False:
+            print(ColoredNotification(f"Item ID ({item_id_to_buy}) wasn't found!!!","red"))
+            Wait()
+
+

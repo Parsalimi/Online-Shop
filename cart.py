@@ -1,4 +1,5 @@
 # cart_id | products_set_id | Total Price
+from productset import ProductSet
 
 class Cart:
     def __init__(self, cart_id, products_set_id: list, total_price):
@@ -30,3 +31,34 @@ class Cart:
     def update_last_cart_id(new_cart_id):
         with open("DB\\cart_db\\id_last_cart_created.txt","w") as file:
             file.write(str(new_cart_id))
+
+    @classmethod
+    def add_item_to_user_cart(cls, user_cart_id, item_name, item_price, item_count):
+        carts_list = cls.get_carts_list()
+        for cart in carts_list:
+            if cart['cart_id'] == user_cart_id:
+                cart['products_set_id'].append(ProductSet.create_new_product_set(item_name, item_price, item_count))
+                cart['total_price'] += item_price * item_count
+        
+        cls.update_cart_db(carts_list)
+    
+    def get_carts_list():
+        carts_list = []
+        with open('DB\\cart_db\\cart.txt','r') as file:
+            for line in file.readlines():
+                carts_list.append(eval(line))
+            return carts_list
+        
+    @classmethod
+    def update_cart_db(cls, carts_list):
+        with open('DB\\cart_db\\cart.txt', 'w') as file:
+            for cart in carts_list:
+                selectedCart = cls(cart['cart_id'],cart['products_set_id'],cart['total_price'])
+                file.write(f'{selectedCart.__dict__}\n')
+
+    def count_items_in_cart(user_cart_id):
+        carts_list = Cart.get_carts_list()
+        for cart in carts_list:
+            if cart['cart_id'] == user_cart_id:
+                item_count_in_cart = len(cart['products_set_id'])
+        return item_count_in_cart
