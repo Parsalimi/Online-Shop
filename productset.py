@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+from tools import *
 
 class ProductSet():
     def __init__(self, product_set_id, name, price, count):
@@ -89,3 +90,48 @@ class ProductSet():
             for product in product_set_list:
                 selectedProductSet = cls(product['product_set_id'],product['name'],product['price'],product['count'])
                 file.write(f'{selectedProductSet.__dict__}\n')
+
+    @classmethod
+    def edit_product_set(cls, product_set_id):
+        cost_free = 0
+        count_available_item = 0
+
+        product_set_list = ProductSet.get_carts_list()
+        for product_set in product_set_list:
+            if product_set['product_set_id'] == product_set_id:
+                product_new_count = get_input(1, "Enter new count: ")
+                if product_new_count > 0:
+                    count_available_item = cls.count_of_item_are_available(product_set['name'])
+                    if product_new_count <= cls.count_of_item_are_available(product_set['name']):
+                        cost_free = (product_new_count - product_set['count'])*product_set['price']
+                        product_set['count'] = product_new_count
+                    else:
+                        print(ColoredNotification(f"Sorry, You want ({product_new_count}), but we dont have that much right now!\nWe have only ({count_available_item})","red"))
+                        Wait()
+                        break
+                else:
+                    print(ColoredNotification("the new count must be 1 at least","red"))
+                    Wait()
+                    break
+
+
+        cls.update_product_set_db(product_set_list)
+
+        return cost_free
+    
+
+    # COPYING FROM ITEM - THEY'RE NOT RELATED TO Product Set
+    @classmethod
+    def count_of_item_are_available(cls, item_name_to_buy): #gets name and returns it count
+        items_list = cls.get_items_list()
+        for item in items_list:
+            if item['name'] == item_name_to_buy:
+                return item['count']
+    
+    @staticmethod
+    def get_items_list():
+        items_list = []
+        with open('DB\\item_db\\item.txt','r') as file:
+            for line in file.readlines():
+                items_list.append(eval(line))
+            return items_list

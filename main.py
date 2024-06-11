@@ -137,7 +137,7 @@ class OnlineShop:
             elif choice == "remove":
                 Cart.remove_product_from_cart(cls.selectedUser.cart_id)
             elif choice == "edit":
-                Cart.edit_product_of_cart()
+                Cart.edit_product_of_cart(cls.selectedUser.cart_id)
 
         
 ##########################

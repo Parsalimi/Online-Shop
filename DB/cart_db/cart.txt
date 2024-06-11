@@ -1,3 +1,4 @@
-{'cart_id': 1, 'products_set_id': [], 'total_price': 0.0}
+{'cart_id': 1, 'products_set_id': [5], 'total_price': 990.0}
 {'cart_id': 2, 'products_set_id': [], 'total_price': 0}
 {'cart_id': 3, 'products_set_id': [], 'total_price': 0}
+{'cart_id': 4, 'products_set_id': [6], 'total_price': 1980.0}

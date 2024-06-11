@@ -84,7 +84,7 @@ class Cart:
         for cart in carts_list:
             if cart_id == cart['cart_id']:
                 if len(cart['products_set_id']) > 0:
-                    print(f"Cart ID: {cart['cart_id']}\nFinal Price: {cart['total_price']}") # TODO: Final Price has a bug when remove price still same
+                    print(f"Cart ID: {cart['cart_id']}\nFinal Price: {cart['total_price']}")
                     if kind == 1:
                         ProductSet.show_product_set(1, cart['products_set_id'])
                     else:
@@ -109,10 +109,29 @@ class Cart:
 
                     cost_free = ProductSet.remove_product_set(product_set_id)
                     cart['total_price'] -= cost_free
-                    
+
                     cls.update_cart_db(carts_list)
 
                     break
+                else:
+                    print(ColoredNotification("Cart is empty!!!","red"))
+                    Wait()
+                    break
+
+    @classmethod
+    def edit_product_of_cart(cls,cart_id):
+        carts_list = cls.get_carts_list()
+        ClearTerminal()
+        for cart in carts_list:
+            if cart_id == cart['cart_id']:
+                if len(cart['products_set_id']) > 0:
+                    cls.show_cart(2, cart_id)
+                    product_set_id = get_input(1,"Item ID to Edit: ", valid_options=cart['products_set_id'])
+
+                    cost_free = ProductSet.edit_product_set(product_set_id)
+                    cart['total_price'] += cost_free
+
+                    cls.update_cart_db(carts_list)
                 else:
                     print(ColoredNotification("Cart is empty!!!","red"))
                     Wait()
