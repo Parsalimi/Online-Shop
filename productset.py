@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+
 class ProductSet():
     def __init__(self, product_set_id, name, price, count):
         self.product_set_id = product_set_id
@@ -48,3 +50,42 @@ class ProductSet():
             for line in file.readlines():
                 product_set_list.append(eval(line))
             return product_set_list
+        
+    @classmethod
+    def show_product_set(cls, kind:int, product_set_ids:list):
+        table = PrettyTable()
+        product_set_list = ProductSet.get_carts_list()
+
+        if kind == 1: # name | count | Price | Total
+            table.field_names = ["Name", "Count", "Price", "Total"]
+            for product_set in product_set_list:
+                if product_set['product_set_id'] in product_set_ids:
+                    table.add_row([product_set['name'],product_set['count'],product_set['price'],product_set['count']*product_set['price']])
+        else: # ID | name | count | Price | Total
+            table.field_names = ["ID","Name", "Count", "Price", "Total"]
+            for product_set in product_set_list:
+                if product_set['product_set_id'] in product_set_ids:
+                    table.add_row([product_set['product_set_id'],product_set['name'],product_set['count'],product_set['price'],product_set['count']*product_set['price']])
+
+        print(table)
+
+    @classmethod
+    def remove_product_set(cls, product_set_id):
+        cost_free = 0
+
+        product_set_list = ProductSet.get_carts_list()
+        for index, product_set in enumerate(product_set_list):
+            if product_set['product_set_id'] == product_set_id:
+                product_set_list.pop(index)
+                cost_free = product_set['price']*product_set['count']
+
+        cls.update_product_set_db(product_set_list)
+
+        return cost_free
+
+    @classmethod
+    def update_product_set_db(cls, product_set_list):
+        with open('DB\\product_set_db\\product_set.txt', 'w') as file:
+            for product in product_set_list:
+                selectedProductSet = cls(product['product_set_id'],product['name'],product['price'],product['count'])
+                file.write(f'{selectedProductSet.__dict__}\n')

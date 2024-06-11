@@ -49,6 +49,9 @@ class OnlineShop:
                 if answer == "shop":
                     cls.user_shopping_menu()
                 
+                elif answer == "cart":
+                    cls.cart_menu()
+
                 elif answer == "sign out":
                     if cls.logged_in == False:
                         print(ColoredNotification("You are not signed in!!!","red"))
@@ -118,8 +121,23 @@ class OnlineShop:
                 else:
                     print(ColoredNotification("No Result!!!", "red"))
                     Wait()
-                
 
+    @classmethod
+    def cart_menu(cls,):
+        flag = True
+        while flag:
+            ClearTerminal()
+            print(ColoredNotification("Cart Menu:", "cyan"))
+            choice = (input(ColoredNotification("Show | Edit | Remove | Exit\n> ", "green"))).lower()
+            if choice == 'exit':
+                flag = False
+                break
+            elif choice == 'show':
+                Cart.show_cart(1,cls.selectedUser.cart_id)
+            elif choice == "remove":
+                Cart.remove_product_from_cart(cls.selectedUser.cart_id)
+            elif choice == "edit":
+                Cart.edit_product_of_cart()
 
         
 ##########################

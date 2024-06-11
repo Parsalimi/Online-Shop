@@ -1,1 +1,0 @@
-{'product_set_id': 1, 'name': 'iPhone 13', 'price': 990.0, 'count': 1}
