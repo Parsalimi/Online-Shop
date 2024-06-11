@@ -3,6 +3,7 @@ from item import Item
 from user import Users
 from category import Category
 from cart import Cart
+from order import Order
 
 class OnlineShop:
     items_list = []
@@ -31,12 +32,12 @@ class OnlineShop:
             if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
                 print(ColoredNotification("Admin Panel: Item | Category | User | Log Order","red"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop | Order", "green"))
 
             # When Normal Users Enter
             else:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop | Order", "green"))
 
     @classmethod
     def MainMenu(cls):
@@ -53,6 +54,9 @@ class OnlineShop:
                 elif answer == "cart":
                     cls.cart_menu()
 
+                elif answer == 'order':
+                    Order.show_user_orders(cls.selectedUser.order_ids)
+                    Wait()
                 elif answer == "sign out":
                     if cls.logged_in == False:
                         print(ColoredNotification("You are not signed in!!!","red"))
