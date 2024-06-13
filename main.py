@@ -12,7 +12,6 @@ class OnlineShop:
     logged_in = False
     isAdmin = False
 
-    #TODO: Update User data each time
     @classmethod
     def ShowMainMenu(cls):
         with open("DB\\user_db\\the_latest_login_id.txt","r") as file:
@@ -32,12 +31,12 @@ class OnlineShop:
             if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
                 print(ColoredNotification("Admin Panel: Item | Category | User | UserOrder","red"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop | Order", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Shop | Order", "green"))
 
             # When Normal Users Enter
             else:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Categories | Shop | Order", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Shop | Order", "green"))
 
     @classmethod
     def MainMenu(cls):

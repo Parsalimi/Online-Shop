@@ -1,3 +1,5 @@
 {'item_id': 1, 'name': 'iPhone 13', 'price': 990.0, 'count': 1, 'category_id': 6, 'detail': '', 'min_age': 16, 'is_item_deleted': 0}
 {'item_id': 2, 'name': 'iphone 12', 'price': 600.0, 'count': 2, 'category_id': 6, 'detail': '', 'min_age': 16, 'is_item_deleted': 0}
 {'item_id': 3, 'name': 'floppy disk', 'price': 3.99, 'count': 1, 'category_id': 3, 'detail': '', 'min_age': 25, 'is_item_deleted': 0}
+{'item_id': 4, 'name': 'banana', 'price': 3.99, 'count': 12, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}
+{'item_id': 5, 'name': 'apple', 'price': 2.99, 'count': 31, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}

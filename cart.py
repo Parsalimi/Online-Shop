@@ -145,6 +145,7 @@ class Cart:
         carts_list = cls.get_carts_list()
         for cart in carts_list:
             if cart_id == cart['cart_id']:
+                # TODO: Check item counts availabe before checkout
                 if len(cart['products_set_id']) > 0:
                     cls.show_cart(1, cart_id)
                     choice = get_input(3, f"Cart ID: {cart['cart_id']}\nFinal Price: {cart['total_price']}\n\nWould you like to proceed to checkout? ('y' to Proceed)\n> ")

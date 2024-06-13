@@ -263,26 +263,31 @@ class Item():
                 for index, item in enumerate(table_row_list):
                     if item[2] < min_price:
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item['item_id'])
+                        possible_id_to_select.remove(item[0])
             
             if max_price is not None:
                 for index, item in enumerate(table_row_list):
                     if item[2] > max_price:
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item['item_id'])
+                        possible_id_to_select.remove(item[0])
 
             # Filter Count
             if min_count is not None:
                 for index, item in enumerate(table_row_list):
                     if item[3] < min_count:
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item['item_id'])
+                        possible_id_to_select.remove(item[0])
             
-            if max_count is not None:
-                for index, item in enumerate(table_row_list):
-                    if item[3] > max_count:
+            # if max_count is not None:
+            #     for index, item in enumerate(table_row_list):
+            #         if item[3] > max_count:
+            #             table_row_list.pop(index)
+            #             possible_id_to_select.remove(item[0])
+                # TODO: Fix here i have to use while and index = 0 ; when if = True then index -= 1
+                for index in range(0, len(table_row_list)):
+                    if table_row_list[index][3] > max_count:
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item['item_id'])
+                        possible_id_to_select.remove(table_row_list[index][0])
 
 
 

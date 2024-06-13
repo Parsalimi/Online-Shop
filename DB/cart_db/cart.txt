@@ -1,7 +1,9 @@
 {'cart_id': 1, 'products_set_id': [5, 7], 'total_price': 1590.0}
 {'cart_id': 2, 'products_set_id': [], 'total_price': 0}
 {'cart_id': 3, 'products_set_id': [], 'total_price': 0}
-{'cart_id': 4, 'products_set_id': [6], 'total_price': 1980.0}
+{'cart_id': 4, 'products_set_id': [6, 10], 'total_price': 1985.98}
 {'cart_id': 5, 'products_set_id': [], 'total_price': 0}
 {'cart_id': 6, 'products_set_id': [8, 9], 'total_price': 3180.0}
 {'cart_id': 7, 'products_set_id': [], 'total_price': 0}
+{'cart_id': 8, 'products_set_id': [], 'total_price': 0}
+{'cart_id': 9, 'products_set_id': [], 'total_price': 0}

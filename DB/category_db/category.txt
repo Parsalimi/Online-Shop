@@ -4,3 +4,4 @@
 {'category_id': 4, 'name': 'Headsets', 'is_category_deleted': 0}
 {'category_id': 5, 'name': 'Monitors', 'is_category_deleted': 0}
 {'category_id': 6, 'name': 'Phones', 'is_category_deleted': 0}
+{'category_id': 7, 'name': 'Fruits', 'is_category_deleted': 0}
