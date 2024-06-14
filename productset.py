@@ -119,7 +119,16 @@ class ProductSet():
 
         return cost_free
     
+    @classmethod
+    def ids_to_count_and_name(cls, product_set_ids_list):
+        productset_ids_to_count_and_name = []
+        product_set_list = cls.get_carts_list()
+        for product in product_set_list:
+            if product['product_set_id'] in product_set_ids_list:
+                productset_ids_to_count_and_name.append([product['name'], product['count']])
 
+        return productset_ids_to_count_and_name
+                    
     @classmethod
     def update_items_list_after_check_out(cls, product_set_ids_list):
         product_set_list = cls.get_carts_list()

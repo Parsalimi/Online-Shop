@@ -1,3 +1,10 @@
 {'payment_id': 1, 'amount': 1590.0, 'status': 'Done', 'type': 'Online-Payment'}
 {'payment_id': 2, 'amount': 3180.0, 'status': 'Done', 'type': 'Online-Payment'}
 {'payment_id': 3, 'amount': 1985.98, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 4, 'amount': 2.99, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 5, 'amount': 600.0, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 6, 'amount': 15.96, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 7, 'amount': 247.12, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 8, 'amount': 290.0, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 9, 'amount': 290.0, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 10, 'amount': 7.98, 'status': 'Done', 'type': 'Online-Payment'}

@@ -24,6 +24,7 @@ class OnlineShop:
                 cls.logged_in = True
 
         if cls.logged_in == False:
+            print(ColoredNotification("Online Shop Program", "cyan"))
             print(ColoredNotification("You are not logged in!", "red"))
             print(ColoredNotification("Sign In | Sign UP", "green"))
         else:
@@ -31,12 +32,12 @@ class OnlineShop:
             if cls.selectedUser.role == 1:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
                 print(ColoredNotification("Admin Panel: Item | Category | User | UserOrder","red"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Shop | Order", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Shop | Order | Sign Out", "green"))
 
             # When Normal Users Enter
             else:
                 print(ColoredNotification(cls.selectedUser.fname + " " + cls.selectedUser.lname,"cyan"))
-                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Sign Out | Shop | Order", "green"))
+                print(ColoredNotification(f"Cart({Cart.count_items_in_cart(cls.selectedUser.cart_id)}) | Shop | Order | Sign Out", "green"))
 
     @classmethod
     def MainMenu(cls):
@@ -46,7 +47,6 @@ class OnlineShop:
             cls.ShowMainMenu()
             answer = input(ColoredNotification("> ", "cyan")).lower()
             if cls.logged_in: # Logged-in
-                
                 if answer == "shop":
                     cls.user_shopping_menu()
                 
@@ -56,36 +56,16 @@ class OnlineShop:
                 elif answer == 'order':
                     Order.show_user_orders(cls.selectedUser.order_ids)
                     Wait()
-                elif answer == "sign out":
-                    if cls.logged_in == False:
-                        print(ColoredNotification("You are not signed in!!!","red"))
-                        Wait()
 
-                    else:
+                elif answer == "sign out":
                         Users.write_the_latest_user_id("")
                         cls.logged_in = False
                         cls.selectedUser = ""
                         print(ColoredNotification("You are signed out Successfully!!!", "green"))
                         Wait()
 
-                elif answer == 'userorder':
-                    ClearTerminal()
-                    Users.show_users()
-                    
-                    notcheck = True
-                    while notcheck:
-                        tagged = False
-                        user_id = get_input(1, "Please enter the User ID to view their orders: ")
-                        
-                        if user_id not in Users.available_users_id():
-                            print(ColoredNotification("That user does not exist!!!", "red"))
-                            Wait()
-                            tagged = True
-                        
-                        if tagged == False:
-                            notcheck = False
-                            
-                    Order.show_user_orders(Users.find_user_orders(user_id))
+                elif cls.isAdmin == False:
+                    print(ColoredNotification("HELP:\n'cart' to manage Cart\n'shop' to buy items\n'order' to see list of your orders\n'sign out' to SIGN OUT", "red"))
                     Wait()
 
                 elif cls.isAdmin: # Admin Enters
@@ -95,12 +75,30 @@ class OnlineShop:
                         Category.category_menu()
                     elif answer == "user":
                         Users.user_managment_menu()
-                    elif answer == "!help":
-                        pass
-                    else:
-                        print("Do you need a help? use this command '!help'")
+                    elif answer == 'userorder':
+                        ClearTerminal()
+                        Users.show_users()
+                        
+                        notcheck = True
+                        while notcheck:
+                            tagged = False
+                            user_id = get_input(1, "Please enter the User ID to view their orders: ")
+                            
+                            if user_id not in Users.available_users_id():
+                                print(ColoredNotification("That user does not exist!!!", "red"))
+                                Wait()
+                                tagged = True
+                            
+                            if tagged == False:
+                                notcheck = False
+                                
+                        user_orders = Users.find_user_orders(user_id)
+                        Order.show_user_orders(user_orders)
                         Wait()
-                    
+                    else:
+                        print(ColoredNotification("HELP:\n'item' to Manage Items\n'category' to Manage Categories\n'user' to manage Users\n'userorder' to see Orders of users\n'cart' to manage Cart\n'shop' to buy items\n'order' to see list of your orders\n'sign out' to SIGN OUT", "red"))
+                        Wait()
+                
 
             else: # Not Logged-in
                 if answer == "sign up":
@@ -108,6 +106,9 @@ class OnlineShop:
                 elif answer == "sign in":
                     if Users.SignInMenu() == True:
                         cls.logged_in = True
+                else:
+                    print(ColoredNotification("Enter 'sign up' to SIGN UP & 'sign in' to SIGN IN", "red"))
+                    Wait()
         
     @classmethod
     def user_shopping_menu(cls):
@@ -129,6 +130,7 @@ class OnlineShop:
                             print(ColoredNotification(f"You have already select {Item.convert_item_id_to_name(item_id)}\nYou can edit it in your Cart.","red"))
                             Wait()
                 else:
+                    ClearTerminal()
                     print(ColoredNotification("No Result!!!", "red"))
                     Wait()
             else:
@@ -164,10 +166,14 @@ class OnlineShop:
             elif choice == "edit":
                 Cart.edit_product_of_cart(cls.selectedUser.cart_id)
             elif choice == 'checkout':
-                Cart.cart_checkout(cls.selectedUser.cart_id)
-                break
+                cart_list_name_count = Cart.cart_item_name_and_count_list(cls.selectedUser.cart_id)
+                if cart_list_name_count:
+                    if Item.remove_cart_items(cart_list_name_count) == False:
+                        continue
+                    else:
+                        Cart.cart_checkout(cls.selectedUser.cart_id)
 
-        
+            
 ##########################
 ## Program Starts HERE! ##
 ##########################

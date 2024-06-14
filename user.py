@@ -183,12 +183,13 @@ class Users:
     def SignInMenu():
         ClearTerminal()
         print(ColoredNotification("Sign In", "green"))
-        username = input("Username: ")
-        password = getpass.getpass("Password: ")
-        selectedUser = Users.SearchUser(show_results=True,username=username,password=password)
-        if selectedUser != None:
-            Users.write_the_latest_user_id(selectedUser.user_id)
-            return True
+        username = input("(enter to quit)\nUsername: ")
+        if username:
+            password = getpass.getpass("Password: ")
+            selectedUser = Users.SearchUser(show_results=True,username=username,password=password)
+            if selectedUser != None:
+                Users.write_the_latest_user_id(selectedUser.user_id)
+                return True
         
     @classmethod
     def user_managment_menu(cls):

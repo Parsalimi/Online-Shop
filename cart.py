@@ -4,6 +4,13 @@ from tools import *
 from payment import Payment
 from order import Order
 
+
+# class Cart(Order):
+#     def __init__(self, order_id, products_set_id: list, total_price, payment_id, cart_id):
+#         super().__init__(order_id, products_set_id, total_price, payment_id)
+#         self.cart_id = cart_id
+
+
 class Cart:
     def __init__(self, cart_id, products_set_id: list, total_price):
         self.cart_id = cart_id
@@ -140,6 +147,16 @@ class Cart:
                     break
 
     @classmethod 
+    def cart_item_name_and_count_list(cls,cart_id):
+        cart_item_name_and_count_list = []
+        carts_list = cls.get_carts_list()
+        for cart in carts_list:
+            if cart_id == cart['cart_id']:
+                if len(cart['products_set_id']) > 0:
+                    cart_list_name_count = ProductSet.ids_to_count_and_name(cart['products_set_id'])
+                    return cart_list_name_count
+
+    @classmethod
     def cart_checkout(cls,cart_id):
         ClearTerminal()
         carts_list = cls.get_carts_list()
@@ -148,6 +165,7 @@ class Cart:
                 # TODO: Check item counts availabe before checkout
                 if len(cart['products_set_id']) > 0:
                     cls.show_cart(1, cart_id)
+                    print(ColoredNotification('--------------------------',"green"))
                     choice = get_input(3, f"Cart ID: {cart['cart_id']}\nFinal Price: {cart['total_price']}\n\nWould you like to proceed to checkout? ('y' to Proceed)\n> ")
                     if choice == 'y':
                         #card_num = get_input(5,"Please enter your credit card number: ")

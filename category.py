@@ -99,6 +99,11 @@ class Category:
             ClearTerminal()
             category_id = Category.getId()
             name = input("Category Name: ")
+            if not name:
+                print(ColoredNotification("Category name cannot be empty!", "red"))
+                Wait()
+                continue
+            
             selectedCategory = cls(category_id,name,0)
             with open("DB\\category_db\\category.txt", "a") as file:
                 file.write(f'{selectedCategory.__dict__}\n')
@@ -120,6 +125,10 @@ class Category:
     @classmethod      
     def remove_category(cls):
         category_list = cls.get_categories_list()
+        if not category_list:
+            print(ColoredNotification("No categories available to remove.", "red"))
+            Wait()
+            return
 
         ClearTerminal()
         cls.show_categories()

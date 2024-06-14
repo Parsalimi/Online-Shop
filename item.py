@@ -16,13 +16,20 @@ class Item():
         self.is_item_deleted = is_item_deleted
 
     def getId():
-        with open("DB\\item_db\\id_last_item_created.txt","r") as file:
-            last_item_id = file.read()
-            if last_item_id != "":
-                last_item_id = int(last_item_id) + 1
-                return last_item_id
-            else:
-                return 1
+        try:
+            with open("DB\\item_db\\id_last_item_created.txt", "r") as file:
+                last_item_id = file.read().strip()
+                if last_item_id:
+                    return int(last_item_id) + 1
+                else:
+                    return 1
+        except FileNotFoundError:
+            print(ColoredNotification("ID file not found. Starting from ID 1.", "red"))
+            return 1
+        except ValueError:
+            print(ColoredNotification("Invalid ID format in the file. Starting from ID 1.", "red"))
+            return 1
+
 
     def UpdateLastId():
         with open("DB\\item_db\\lastItemId.txt","w") as file:
@@ -62,20 +69,44 @@ class Item():
             notcheck = True
             while notcheck:
                 tagged = False
-                name = get_input(3, "item Name: ")
+                name = input("item Name: ")
+                if not name:
+                    print(ColoredNotification("Item name cannot be empty!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    continue
                 # Check if that item name exists
                 for item in items_list:
-                    if item['name'].lower() == name:
-                        print(ColoredNotification("That item name is already EXISTS!!!", "red"))
+                    if item['name'].lower() == name.lower():
+                        print(ColoredNotification("That item name already EXISTS!!!", "red"))
                         Wait()
                         ClearTerminal()
                         tagged = True
-            
-                if tagged == False:
+
+                if not tagged:
                     notcheck = False
+
             
-            price = get_input(2,"item Price: ")
-            count = get_input(1,"item Count: ")
+            while True:
+                try:
+                    price = get_input(2, "item Price: ")
+                    if price <= 0:
+                        raise ValueError
+                    break
+                except ValueError:
+                    print(ColoredNotification("Invalid price! Please enter a positive number.", "red"))
+                    Wait()
+
+            while True:
+                try:
+                    count = get_input(1, "item Count: ")
+                    if count < 0:
+                        raise ValueError
+                    break
+                except ValueError:
+                    print(ColoredNotification("Invalid count! Please enter a positive number.", "red"))
+                    Wait()
+
 
             select_categpry_result = Category.select_category()
             if select_categpry_result == False:
@@ -87,13 +118,18 @@ class Item():
 
             notcheck = True
             while notcheck:
-                min_age = get_input(1,"Minimum Age: ")
-                if min_age < 0 or min_age > 120:
-                    print(ColoredNotification("Invalid Age!!!", "red"))
-                    Wait()
-                    ClearTerminal()
-                else:
-                    notcheck = False
+                notcheck = True
+                while notcheck:
+                    try:
+                        min_age = int(get_input(1, "Minimum Age: "))
+                        if min_age < 0 or min_age > 120:
+                            raise ValueError
+                        notcheck = False
+                    except ValueError:
+                        print(ColoredNotification("Invalid Age! Please enter a valid age between 0 and 120.", "red"))
+                        Wait()
+                        ClearTerminal()
+
 
             is_item_deleted = 0
             selectedItem = cls(item_id,name,price,count,category_id,detail,min_age,is_item_deleted)
@@ -115,10 +151,23 @@ class Item():
 
         ClearTerminal()
         cls.show_item()
-        item_id = input("Enter item ID to remove: ")
-        for item in items_list:
-            if item["item_id"] == int(item_id):
-                item['is_item_deleted'] = 1
+
+        item_id = get_input(1, "Enter item ID to remove: ")
+        try:
+            item_id = int(item_id)
+            item_found = False
+            for item in items_list:
+                if item["item_id"] == item_id:
+                    item['is_item_deleted'] = 1
+                    item_found = True
+                    break
+            if not item_found:
+                print(ColoredNotification("Item ID not found!", "red"))
+        except ValueError:
+            print(ColoredNotification("Invalid item ID!", "red"))
+        Wait()
+
+
         cls.update_item_db(items_list)
                 
     @classmethod
@@ -137,6 +186,7 @@ class Item():
                         notcheck = True
                         while notcheck:
                             tagged = False
+                            # TODO: it makes all the names lower case and also strip them
                             name = get_input(3, "Enter new item Name: ")
                             # Check if that item name exists
                             for item in items_list:
@@ -209,7 +259,6 @@ class Item():
         for table_row in table_row_list:
             table.add_row([table_row[0],table_row[1], table_row[2], table_row[3], table_row[4], table_row[5]])
         print(table)
-        Wait()
     
     @classmethod
     def search_items(cls, items_list:list, search_by=None, search_value=None, min_count:int=None, max_count:int=None, 
@@ -260,34 +309,41 @@ class Item():
         if only_one_result == False:
             # Filter Price
             if min_price is not None:
-                for index, item in enumerate(table_row_list):
-                    if item[2] < min_price:
+                index = 0
+                while index < len(table_row_list):
+                    if table_row_list[index][2] < min_price:
+                        possible_id_to_select.remove(table_row_list[index][0])
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item[0])
+                        index -= 1
+                    index += 1
             
             if max_price is not None:
-                for index, item in enumerate(table_row_list):
-                    if item[2] > max_price:
+                index = 0
+                while index < len(table_row_list):
+                    if table_row_list[index][2] > max_price:
+                        possible_id_to_select.remove(table_row_list[index][0])
                         table_row_list.pop(index)
-                        possible_id_to_select.remove(item[0])
+                        index -= 1
+                    index += 1
 
             # Filter Count
             if min_count is not None:
-                for index, item in enumerate(table_row_list):
-                    if item[3] < min_count:
-                        table_row_list.pop(index)
-                        possible_id_to_select.remove(item[0])
-            
-            # if max_count is not None:
-            #     for index, item in enumerate(table_row_list):
-            #         if item[3] > max_count:
-            #             table_row_list.pop(index)
-            #             possible_id_to_select.remove(item[0])
-                # TODO: Fix here i have to use while and index = 0 ; when if = True then index -= 1
-                for index in range(0, len(table_row_list)):
-                    if table_row_list[index][3] > max_count:
-                        table_row_list.pop(index)
+                index = 0
+                while index < len(table_row_list):
+                    if table_row_list[index][3] < max_count:
                         possible_id_to_select.remove(table_row_list[index][0])
+                        table_row_list.pop(index)
+                        index -= 1
+                    index += 1
+
+            if max_count is not None:       
+                index = 0
+                while index < len(table_row_list):
+                    if table_row_list[index][3] > max_count:
+                        possible_id_to_select.remove(table_row_list[index][0])
+                        table_row_list.pop(index)
+                        index -= 1
+                    index += 1
 
 
 
@@ -468,3 +524,18 @@ class Item():
             if item['item_id'] == item_id:
                 return item['name']
 
+    @classmethod   
+    def remove_cart_items(cls, cart_list):
+        items_list = cls.get_items_list()
+        for item in items_list:
+            for cart in cart_list:
+                if item['name'] == cart[0]:
+                    if item['count'] < cart[1]:
+                        print(ColoredNotification(f"Sorry, we don't have {item['count']} of {item['name']}\nTo Checkout please edit you card","red"))
+                        Wait()
+                        return False
+                    
+        for item in items_list:
+            for cart in cart_list:
+                if item['name'] == cart[0]:
+                        item['count'] -= cart[1]

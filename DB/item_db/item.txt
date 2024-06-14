@@ -1,5 +1,10 @@
 {'item_id': 1, 'name': 'iPhone 13', 'price': 990.0, 'count': 1, 'category_id': 6, 'detail': '', 'min_age': 16, 'is_item_deleted': 0}
-{'item_id': 2, 'name': 'iphone 12', 'price': 600.0, 'count': 2, 'category_id': 6, 'detail': '', 'min_age': 16, 'is_item_deleted': 0}
+{'item_id': 2, 'name': 'iphone 12', 'price': 600.0, 'count': 1, 'category_id': 6, 'detail': '', 'min_age': 16, 'is_item_deleted': 0}
 {'item_id': 3, 'name': 'floppy disk', 'price': 3.99, 'count': 1, 'category_id': 3, 'detail': '', 'min_age': 25, 'is_item_deleted': 0}
-{'item_id': 4, 'name': 'banana', 'price': 3.99, 'count': 12, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}
-{'item_id': 5, 'name': 'apple', 'price': 2.99, 'count': 31, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}
+{'item_id': 4, 'name': 'banana', 'price': 3.99, 'count': 6, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}
+{'item_id': 5, 'name': 'apple', 'price': 2.99, 'count': 30, 'category_id': 7, 'detail': '', 'min_age': 0, 'is_item_deleted': 0}
+{'item_id': 6, 'name': 'lamp', 'price': 6.95, 'count': 30, 'category_id': 3, 'detail': '', 'min_age': 3, 'is_item_deleted': 0}
+{'item_id': 7, 'name': 'g502', 'price': 123.56, 'count': 1, 'category_id': 2, 'detail': '', 'min_age': 9, 'is_item_deleted': 0}
+{'item_id': 8, 'name': 'ball', 'price': 2.99, 'count': 6, 'category_id': 4, 'detail': '', 'min_age': 2, 'is_item_deleted': 0}
+{'item_id': 9, 'name': 'G804', 'price': 130.0, 'count': 3, 'category_id': 3, 'detail': '', 'min_age': 12, 'is_item_deleted': 0}
+{'item_id': 10, 'name': 'Razer', 'price': 145.0, 'count': 0, 'category_id': 2, 'detail': '', 'min_age': 12, 'is_item_deleted': 0}
