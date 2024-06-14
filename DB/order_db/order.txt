@@ -8,3 +8,4 @@
 {'order_id': 8, 'products_set_id': [16], 'total_price': 290.0, 'payment_id': 8}
 {'order_id': 9, 'products_set_id': [15], 'total_price': 290.0, 'payment_id': 9}
 {'order_id': 10, 'products_set_id': [17], 'total_price': 7.98, 'payment_id': 10}
+{'order_id': 11, 'products_set_id': [18], 'total_price': 990.0, 'payment_id': 11}

@@ -271,7 +271,7 @@ class Item():
         # if search from user_search_item_menu check the user age
         if user_age:
             for index, item in enumerate(items_list):
-                if user_age < item['min_age']:
+                if user_age < item['min_age'] or item['count'] <= 0:
                     items_list.pop(index)
                     
         # Filtering items based on search criteria
@@ -379,6 +379,7 @@ class Item():
         elif search_by == 'category':
             ClearTerminal()
             Category.show_categories()
+            print(ColoredNotification("Enter 'n' if you don't want to filter that attribute!!!", "red"))
             search_value = get_input(1, "Item Category (ID): ", valid_options=Category.available_category_id(), return_none_on='n')
 
         ascending, sort_by, min_price, max_price, min_count, max_count = True, None,None,None,None,None
@@ -422,6 +423,7 @@ class Item():
         elif search_by == 'category':
             ClearTerminal()
             Category.show_categories()
+            print(ColoredNotification("Enter 'n' if you don't want to filter that attribute!!!", "red"))
             search_value = get_input(1, "Item Category (ID): ", valid_options=Category.available_category_id(), return_none_on='n')
 
         ascending, sort_by, min_price, max_price, min_count, max_count = True, None,None,None,None,None
@@ -460,7 +462,7 @@ class Item():
         items_list = cls.get_items_list()
         for item in items_list:
             if search_word in item['name'].lower() or search_word in Category.category_id_to_name(item['category_id']).lower():
-                if user_age >= item['min_age']:
+                if user_age >= item['min_age'] and item['count'] > 0:
                     table_row_list.append([item['item_id'], item['name'], item['price'], item['count'], Category.category_id_to_name(item['category_id']), item['detail'],item['min_age']])
                     possible_id_to_select.append(item['item_id'])
 

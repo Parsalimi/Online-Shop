@@ -8,3 +8,4 @@
 {'payment_id': 8, 'amount': 290.0, 'status': 'Done', 'type': 'Online-Payment'}
 {'payment_id': 9, 'amount': 290.0, 'status': 'Done', 'type': 'Online-Payment'}
 {'payment_id': 10, 'amount': 7.98, 'status': 'Done', 'type': 'Online-Payment'}
+{'payment_id': 11, 'amount': 990.0, 'status': 'Done', 'type': 'Online-Payment'}
