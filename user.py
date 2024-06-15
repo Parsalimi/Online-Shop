@@ -105,66 +105,142 @@ class Users:
         while notcheck:
             tagged = False
             username = get_input(3, "Username: ")
-            # Check if that username exists
-            for user in users_list:
-                if user['username'].lower() == username:
-                    print(ColoredNotification("That username is already EXISTS!!!", "red"))
+            if ' ' not in list(username) and "\\" not in list(username):
+                if username:
+                    # Check if that username exists
+                    for user in users_list:
+                        if user['username'].lower() == username:
+                            print(ColoredNotification("That username is already EXISTS!!!", "red"))
+                            Wait()  
+                            ClearTerminal()
+                            tagged = True
+                else:
+                    print(ColoredNotification("Enter something!!!", "red"))
                     Wait()
                     ClearTerminal()
                     tagged = True
-            
-            if tagged == False:
-                notcheck = False
-
-        password = input("Password: ")
-        notcheck = True
-        while notcheck:
-            fname = input("First Name: ")
-            if is_str_contains_int(fname):
-                print(ColoredNotification("Does your first name really have a number in it!?!", "red"))
-                Wait()
-                ClearTerminal()
+                
+                if tagged == False:
+                    notcheck = False
             else:
-                notcheck = False
-            
-        notcheck = True
-        while notcheck:
-            lname = input("Last Name: ")
-            if is_str_contains_int(lname):
-                print(ColoredNotification("Does your last name really have a number in it!?!", "red"))
-                Wait()
-                ClearTerminal()
-            else:
-                notcheck = False
-
-        notcheck = True
-        while notcheck:
-            age = get_input(1,"Age: ")
-            if age < 0 or age > 120:
-                print(ColoredNotification("Invalid Age!!!", "red"))
-                Wait()
-                ClearTerminal()
-            else:
-                notcheck = False
+                    print(ColoredNotification("You cant use space or '\\'!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
         
+        # Password
         notcheck = True
         while notcheck:
             tagged = False
-            phone = input("Phone Number: ")
-            if len(phone) != 11:
-                tagged = True
-
-            for char in list(phone):
-                if char.isdigit() == False:
+            password = input("Password: ")
+            if ' ' not in list(password) and "\\" not in list(password):
+                if password:
+                    pass
+                else:
+                    print(ColoredNotification("Enter something!!!", "red"))
+                    Wait()
+                    ClearTerminal()
                     tagged = True
-                    break
-
-            if tagged == False:
-                notcheck = False
+                
+                if tagged == False:
+                    notcheck = False
             else:
-                print(ColoredNotification("Invalid Number!!!", "red"))
+                    print(ColoredNotification("You cant use space or '\\'!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+
+        # First Name
+        notcheck = True
+        while notcheck:
+            tagged = False
+            fname = get_input(4, "First Name: ")
+            if ' ' not in list(fname) and "\\" not in list(fname):
+                if fname:
+                    pass
+                else:
+                    print(ColoredNotification("Enter something!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+                
+                if tagged == False:
+                    notcheck = False
+            else:
+                    print(ColoredNotification("You cant use space or '\\'!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+
+        # Last Name
+        notcheck = True
+        while notcheck:
+            tagged = False
+            lname = get_input(4, "Last Name: ")
+            if ' ' not in list(lname) and "\\" not in list(lname):
+                if lname:
+                    pass
+                else:
+                    print(ColoredNotification("Enter something!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+                
+                if tagged == False:
+                    notcheck = False
+            else:
+                    print(ColoredNotification("You cant use space or '\\'!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True 
+
+        # Age
+        notcheck = True
+        while notcheck:
+            tagged = False
+            age = get_input(1,"Age: ")
+            if age:
+                    if age < 0 or age > 120:
+                        print(ColoredNotification("Invalid Age!!!", "red"))
+                        Wait()
+                        ClearTerminal()
+                        tagged = True
+                    else:
+                        notcheck = False
+            else:
+                print(ColoredNotification("Enter something!!!", "red"))
                 Wait()
                 ClearTerminal()
+                tagged = True
+            
+            if tagged == False:
+                notcheck = False
+                    
+
+        # Phone Number
+        notcheck = True
+        while notcheck:
+            tagged = False
+            phone = get_input(5, "Phone Number: ")
+            if ' ' not in list(phone) and "\\" not in list(phone):
+                if phone:
+                    if len(phone) != 11:
+                        tagged = True
+                        print(ColoredNotification("Phone must be 11", "red"))
+                        Wait()     
+                else:
+                    print(ColoredNotification("Enter something!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True
+                
+                if tagged == False:
+                    notcheck = False
+            else:
+                    print(ColoredNotification("You cant use space or '\\'!!!", "red"))
+                    Wait()
+                    ClearTerminal()
+                    tagged = True    
 
         role = 0
         order_ids = []

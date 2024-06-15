@@ -16,3 +16,5 @@
 {'cart_id': 16, 'products_set_id': [], 'total_price': 0}
 {'cart_id': 17, 'products_set_id': [18], 'total_price': 990.0}
 {'cart_id': 18, 'products_set_id': [], 'total_price': 0}
+{'cart_id': 19, 'products_set_id': [], 'total_price': 0}
+{'cart_id': 20, 'products_set_id': [], 'total_price': 0}

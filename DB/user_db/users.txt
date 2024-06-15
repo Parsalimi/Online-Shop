@@ -2,3 +2,5 @@
 {'user_id': 2, 'username': 'ali', 'password': '1234', 'fname': 'Ali', 'lname': 'Rajaei', 'age': 20, 'phone': '09123456789', 'role': 0, 'order_ids': [4, 5, 8], 'cart_id': 14}
 {'user_id': 3, 'username': 'rsalimi', 'password': '123456', 'fname': 'Reza', 'lname': 'Salimi', 'age': 50, 'phone': '09123332044', 'role': 0, 'order_ids': [3], 'cart_id': 9}
 {'user_id': 4, 'username': 'alireza', 'password': '1234', 'fname': 'Alireza', 'lname': 'Taheri', 'age': 23, 'phone': '09123456789', 'role': 0, 'order_ids': [11], 'cart_id': 18}
+{'user_id': 5, 'username': 'amin', 'password': 'amin1234', 'fname': 'Amin', 'lname': 'Arshadi', 'age': 19, 'phone': '09123456789', 'role': 0, 'order_ids': [], 'cart_id': 19}
+{'user_id': 6, 'username': 'abbas', 'password': '1234', 'fname': 'Abbas', 'lname': 'Salimi', 'age': 76, 'phone': '09123456789', 'role': 0, 'order_ids': [], 'cart_id': 20}
